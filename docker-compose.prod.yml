@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mern-net
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: production
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+    env_file:
+      - .env.prod
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+    networks:
+      - mern-net
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - mern-net
+
+volumes:
+  mongo-data:
+
+networks:
+  mern-net:
+    driver: bridge
+
+# Note: create a .env.prod with at least MONGO_URI and JWT_SECRET for production

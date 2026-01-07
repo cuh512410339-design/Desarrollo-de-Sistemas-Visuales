@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mern_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: mern_db
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - mern-net
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: production
+    image: mern_server:latest
+    container_name: mern_server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/mern_db
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+    networks:
+      - mern-net
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: production
+    image: mern_client:latest
+    container_name: mern_client
+    restart: unless-stopped
+    environment:
+      - VITE_API_URL=http://server:4000/api
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - mern-net
+
+volumes:
+  mongo-data:
+
+networks:
+  mern-net:
+    driver: bridge

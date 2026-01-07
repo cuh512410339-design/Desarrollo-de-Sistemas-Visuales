@@ -1,0 +1,53 @@
+{
+  "name": "mern-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["server", "client"],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "npm --prefix server run build",
+    "build:client": "npm --prefix client run build",
+    "start:server": "npm --prefix server run start",
+    "docker:up": "docker compose up --build",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --build",
+    "lint": "npm run -w server lint && npm run -w client lint",
+    "typecheck": "npm run -w server typecheck && npm run -w client typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^14.0.0"
+  },
+  "lint-staged": {
+    "server/**/*.{ts,js}": [
+      "npm --prefix server run lint",
+      "npm --prefix server run typecheck",
+      "git add"
+    ],
+    "client/**/*.{ts,tsx}": [
+      "npm --prefix client run lint",
+      "npm --prefix client run typecheck",
+      "git add"
+    ]
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "npm --prefix server run build",
+    "build:client": "npm --prefix client run build",
+    "start:server": "npm --prefix server run start",
+    "docker:up": "docker compose up --build",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --build",
+    "lint": "npm run -w server lint && npm run -w client lint",
+    "typecheck": "npm run -w server typecheck && npm run -w client typecheck",
+    "test": "npm run -w server test",
+    "test:watch": "npm run -w server test:watch",
+    "test:docker": "docker compose run --rm server npm test"
+  }
+}
