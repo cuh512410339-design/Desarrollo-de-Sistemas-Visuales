@@ -12,7 +12,7 @@ export default function Home() {
 
   return (
     <div style={{ padding: 24 }}>
-      <h1>MERN App</h1>
+      <h1>MERN App Aldo Franco Chavez</h1>
       <p>API status: {status}</p>
     </div>
   );

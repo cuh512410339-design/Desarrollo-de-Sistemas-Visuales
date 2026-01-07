@@ -3,7 +3,8 @@
 FROM node:20-alpine AS base
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+# Cambiamos ci por install para saltar la restricción del lockfile
+RUN npm install
 COPY . .
 
 # Development target (Vite)

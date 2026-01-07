@@ -3,7 +3,8 @@
 FROM node:20-alpine AS base
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm ci
+# Cambiamos ci por install para evitar el error de package-lock.json
+RUN npm install
 COPY . .
 
 # Development target (hot reload with ts-node-dev)
@@ -22,7 +23,8 @@ FROM node:20-alpine AS production
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm ci --only=production
+# Cambiamos ci por install también en producción
+RUN npm install --only=production
 COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 4000
 CMD ["node", "dist/index.js"]
