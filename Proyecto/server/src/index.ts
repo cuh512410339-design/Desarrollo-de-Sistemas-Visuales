@@ -9,12 +9,15 @@ dotenv.config();
 const app = express();
 
 // Configuración de Middlewares
-app.use(cors()); // <--- ESTO SOLUCIONA EL "API STATUS: ERROR"
+app.use(cors({ origin: '*' })); // <--- ESTO SOLUCIONA EL "API STATUS: ERROR"
 app.use(express.json());
 
 // Rutas
 app.use('/api', apiRouter);
 app.use('/api/auth', authRouter);
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
 
 const PORT = Number(process.env.PORT) || 4000;
 

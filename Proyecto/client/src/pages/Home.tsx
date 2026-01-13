@@ -14,6 +14,7 @@ export default function Home() {
     <div style={{ padding: 24 }}>
       <h1>MERN App Aldo Franco Chavez</h1>
       <p>API status: {status}</p>
+      <img src="https://via.placeholder.com/150" alt="Placeholder" style={{ marginTop: 16 }} />
     </div>
   );
 }
