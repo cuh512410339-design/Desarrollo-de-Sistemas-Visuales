@@ -1,6 +1,10 @@
 import React from 'react';
-import Home from './pages/Home';
+import InventoryForm from './pages/InventoryForm';
 
-const App = () => <Home />;
+const App = () => (
+    <div className="App">
+        <InventoryForm />
+    </div>
+);
 
 export default App;
