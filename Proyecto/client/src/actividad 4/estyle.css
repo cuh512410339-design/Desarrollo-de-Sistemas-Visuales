@@ -16,28 +16,65 @@ body {
     width: 100%;
 }
 
-/* Bordes generales */
 div, aside, section, header, nav, footer {
     border: 1px solid white;
 }
 
-/* HEADER */
-.header-left { width: 20%; background-color: #5b84bc; height: 80px; }
-.header-right { width: 80%; background-color: #3b5998; height: 80px; }
-
-/* NAV */
-.nav-item { width: 25%; background-color: #4db6ac; height: 50px; }
-
-/* MAIN SECTION */
-.main-container { height: 400px; }
-.aside { width: 25%; background-color: #72a661; display: flex; align-items: center; justify-content: center; }
-
-.content-wrapper { width: 75%; display: flex; flex-direction: column; }
-.content-top { height: 40%; background-color: #f0ad4e; display: flex; align-items: center; justify-content: center; }
-.content-bottom { height: 60%; }
-.sub-content { width: 50%; background-color: #618cc1; display: flex; align-items: center; justify-content: center; }
-
-/* FOOTER */
-footer { height: 60px; }
-.footer-left { width: 50%; background-color: #949fb1; }
-.footer-mid, .footer-right { width: 25%; background-color: #949fb1; }
+.header-left { 
+    width: 20%; 
+    background-color: #5b84bc; 
+    height: 80px; 
+}
+.header-right { 
+    width: 80%; 
+    background-color: #3b5998; 
+    height: 80px; 
+}
+.nav-item { 
+    width: 25%; 
+    background-color: #4db6ac; 
+    height: 50px; 
+}
+.main-container { 
+    height: 400px; 
+}
+.aside { 
+    width: 25%; 
+    background-color: #72a661; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+.content-wrapper { 
+    width: 75%; 
+    display: flex; 
+    flex-direction: column; 
+}
+.content-top { 
+    height: 40%; 
+    background-color: #f0ad4e; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+.content-bottom { 
+    height: 60%; 
+}
+.sub-content { 
+    width: 50%; 
+    background-color: #618cc1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+footer { 
+    height: 60px; 
+}
+.footer-left { 
+    width: 50%; 
+    background-color: #949fb1; 
+}
+.footer-mid, .footer-right { 
+    width: 25%; 
+    background-color: #949fb1; 
+}
