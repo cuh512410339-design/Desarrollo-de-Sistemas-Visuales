@@ -65,30 +65,24 @@ button[disabled] {
    background-color: #03009c;
 }
 .contenido {
-    display: flex;            /* 1. Cambiado de inline-flex a flex */
+    display: flex;            
     flex-direction: row;      
     justify-content: space-around;
-    width: 100%;              /* 3. Forzamos el ancho total */
-    max-width: 100%;          /* 4. Eliminamos el límite del 50% */
+    width: 100%;              
+    max-width: 100%;          
     height: 100%;
     align-items: center;
     background-color: aquamarine;
     box-sizing: border-box;   /* 5. Evita que el padding genere desbordamiento */
 }
-   
 .texto {
    text-align: center;
-   font-size: 2.5em;       /* Subimos de 1.5 a 2.5 para que la letra sea mucho más grande */
+   font-size: 1.5em;
    color: white;
-   padding: 10px 20px;    /* Agregamos relleno para que el cuadro negro/azul crezca */
-   margin: 10px 0;        /* Damos espacio entre los cuadros para que no se peguen */
-   display: inline-block; /* Asegura que el padding se aplique correctamente */
-   font-weight: bold;     /* Hace que la letra sea más gruesa */
-
 }
 .canvas {
     display: flex;            /* Alinea los dos .contenido en horizontal */
     flex-direction: row;      /* Uno a la izquierda, otro a la derecha */
     width: 100%;
-    height: 100vh;            /* Para que cubra toda la altura de la pantalla */
+    height: 100%;            /* Para que cubra toda la altura de la pantalla */
 }
