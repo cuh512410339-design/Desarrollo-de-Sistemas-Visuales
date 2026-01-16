@@ -1,0 +1,94 @@
+/* Estilos minimos para formularios */
+
+.panel {
+   border: 1px solid #000;
+   border-radius: 12px;
+   padding: 16px;
+}
+.panel-separacion {
+   margin-top: 16px;
+}
+textarea {
+   width: 100%;
+   margin-top: 6px;
+   padding: 10px;
+   border: 1px solid #bbb;
+   border-radius: 10px;
+   font: inherit
+}
+.acciones {
+   margin-top: 12px;
+   display: flex;
+   gap: 10px;
+   flex-wrap: wrap;
+}
+button {
+   padding: 10px 16px;
+   border: 1px solid #333;
+   border-radius: 8px;
+   background: #fff;
+   cursor: pointer;
+}
+
+button[disabled] {
+   opacity: 0.6;
+   cursor: not-allowed;
+}
+.boton-secundario {
+   border-color: #666
+}
+.error {
+   color: red;
+   font-weight: bold;
+   margin-top: 10px;
+}
+.texto-chico {
+   font-size: 0.9em;
+}
+
+#contenedor-principal {
+   display: flex;
+   flex-direction: column;
+
+   background-color: #333;
+}
+#contenedor-secundario {
+   display: flex;
+   flex-direction: column;
+
+   background-color: #000;
+}
+#contenedor-terciario {
+   display: flex;
+   flex-direction: column;
+
+   background-color: #03009c;
+}
+.contenido {
+    display: flex;            /* 1. Cambiado de inline-flex a flex */
+    flex-direction: row;      
+    justify-content: space-around;
+    width: 100%;              /* 3. Forzamos el ancho total */
+    max-width: 100%;          /* 4. Eliminamos el límite del 50% */
+    height: 100%;
+    align-items: center;
+    background-color: aquamarine;
+    box-sizing: border-box;   /* 5. Evita que el padding genere desbordamiento */
+}
+   
+.texto {
+   text-align: center;
+   font-size: 2.5em;       /* Subimos de 1.5 a 2.5 para que la letra sea mucho más grande */
+   color: white;
+   padding: 10px 20px;    /* Agregamos relleno para que el cuadro negro/azul crezca */
+   margin: 10px 0;        /* Damos espacio entre los cuadros para que no se peguen */
+   display: inline-block; /* Asegura que el padding se aplique correctamente */
+   font-weight: bold;     /* Hace que la letra sea más gruesa */
+
+}
+.canvas {
+    display: flex;            /* Alinea los dos .contenido en horizontal */
+    flex-direction: row;      /* Uno a la izquierda, otro a la derecha */
+    width: 100%;
+    height: 100vh;            /* Para que cubra toda la altura de la pantalla */
+}
