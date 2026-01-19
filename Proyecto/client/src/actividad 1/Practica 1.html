@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Práctica 01: Eventos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #e0e7ff;
+        }
+        .caja {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 { color: #3730a3; }
+        #contador {
+            font-size: 80px;
+            display: block;
+            margin: 20px 0;
+            color: #1e1b4b;
+        }
+        button {
+            padding: 15px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 5px;
+            color: white;
+        }
+        #btn-sumar { background-color: #4f46e5; }
+        #btn-reset { background-color: #ef4444; }
+    </style>
+</head>
+<body>
+
+    <div class="caja">
+        <h1>Mi Contador</h1>
+        <span id="contador">0</span>
+        <br>
+        <button id="btn-sumar">Sumar</button>
+        <button id="btn-reset">Reiniciar</button>
+    </div>
+
+    <script>
+        let cuenta = 0;
+        const textoContador = document.getElementById("contador");
+        const botonSumar = document.getElementById("btn-sumar");
+        const botonReset = document.getElementById("btn-reset");
+
+        botonSumar.addEventListener("click", () => {
+            cuenta = cuenta + 1;
+            textoContador.textContent = cuenta;
+            textoContador.style.color = "#4f46e5";
+        });
+
+        botonReset.addEventListener("click", () => {
+            cuenta = 0;
+            textoContador.textContent = cuenta;
+            textoContador.style.color = "#1e1b4b";
+        });
+    </script>
+</body>
+</html>
