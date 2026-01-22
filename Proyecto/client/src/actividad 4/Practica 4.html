@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD Compras - Acumulativo</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<main class="contenedor">
+  <h1>🛒 Crud Practica 4</h1>
+  <p style="color: #64748b; font-size: 0.9rem;">Si el producto existe, se suma la cantidad y actualiza el precio.</p>
+  
+  <section class="panel">
+    <form id="formCompra">
+      <label for="nombre">Producto</label>
+      <input type="text" id="nombre" placeholder="Nombre del artículo...">
+      
+      <label for="precio">Precio Unitario ($)</label>
+      <input type="number" id="precio" step="0.01" placeholder="0.00">
+      
+      <label for="categoria">Categoría</label>
+      <select id="categoria">
+        <option value="">Seleccione...</option>
+        <option value="Electrónica">Electrónica</option>
+        <option value="Hogar">Hogar</option>
+        <option value="Alimentos">Alimentos</option>
+      </select>
+
+      <div id="error" class="error"></div>
+      <button type="submit" id="btnGuardar" disabled>Registrar / Actualizar</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Inventario Total</h2>
+    <ul id="listaProductos"></ul>
+    <p id="mensajeVacio" style="text-align: center; color: #94a3b8;">Inventario vacío.</p>
+  </section>
+</main>
+
+<script>
+  let inventario = [];
+  let idEnEdicionManual = null;
+
+  const form = document.getElementById('formCompra');
+  const inNombre = document.getElementById('nombre');
+  const inPrecio = document.getElementById('precio');
+  const inCat = document.getElementById('categoria');
+  const btnGuardar = document.getElementById('btnGuardar');
+  const listaUI = document.getElementById('listaProductos');
+
+  // --- VALIDACIÓN (Reglas de Negocio) ---
+  const validar = () => {
+    const esValido = inNombre.value.trim().length >= 3 && 
+                     parseFloat(inPrecio.value) > 0 && 
+                     inCat.value !== "";
+    btnGuardar.disabled = !esValido;
+  };
+
+  [inNombre, inPrecio, inCat].forEach(el => el.addEventListener('input', validar));
+
+  // --- RENDERIZADO (Read) ---
+  const renderizar = () => {
+    listaUI.innerHTML = "";
+    document.getElementById('mensajeVacio').style.display = inventario.length ? "none" : "block";
+
+    inventario.forEach(p => {
+      const li = document.createElement('li');
+      li.className = "item-producto";
+      li.innerHTML = `
+        <div>
+          <strong>${p.nombre}</strong> <span class="badge-cantidad">x${p.cantidad}</span>
+          <br><small>$${parseFloat(p.precio).toFixed(2)} c/u | ${p.categoria}</small>
+        </div>
+        <div class="acciones">
+          <button class="btn-edit" onclick="prepararEdicion(${p.id})">✏️</button>
+          <button class="btn-delete" onclick="eliminar(${p.id})">🗑️</button>
+        </div>
+      `;
+      listaUI.appendChild(li);
+    });
+  };
+
+  // --- CREAR / ACTUALIZAR (Create & Update) ---
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const nombreNormalizado = inNombre.value.trim().toLowerCase();
+    const precioVal = parseFloat(inPrecio.value);
+    
+    // Caso 1: Estamos editando un ID específico manualmente (clic en lápiz)
+    if (idEnEdicionManual) {
+      inventario = inventario.map(p => 
+        p.id === idEnEdicionManual 
+        ? { ...p, nombre: inNombre.value.trim(), precio: precioVal, categoria: inCat.value } 
+        : p
+      );
+      idEnEdicionManual = null;
+      btnGuardar.textContent = "Registrar / Actualizar";
+    } 
+    else {
+      // Caso 2: Verificamos si el producto ya existe para ACUMULAR
+      const indiceExistente = inventario.findIndex(p => p.nombre.toLowerCase() === nombreNormalizado);
+
+      if (indiceExistente !== -1) {
+        // Actualizamos precio al último ingresado y sumamos cantidad
+        inventario[indiceExistente].precio = precioVal;
+        inventario[indiceExistente].cantidad += 1;
+      } else {
+        // Es un producto nuevo
+        inventario.push({
+          id: Date.now(),
+          nombre: inNombre.value.trim(),
+          precio: precioVal,
+          categoria: inCat.value,
+          cantidad: 1
+        });
+      }
+    }
+
+    form.reset();
+    validar();
+    renderizar();
+  });
+
+  // --- ELIMINAR (Delete) ---
+  window.eliminar = (id) => {
+    inventario = inventario.filter(p => p.id !== id);
+    renderizar();
+  };
+
+  // --- PREPARAR EDICIÓN MANUAL ---
+  window.prepararEdicion = (id) => {
+    const p = inventario.find(item => item.id === id);
+    if (p) {
+      inNombre.value = p.nombre;
+      inPrecio.value = p.precio;
+      inCat.value = p.categoria;
+      idEnEdicionManual = id;
+      btnGuardar.textContent = "Confirmar Cambios";
+      validar();
+    }
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+:root {
+  --primary: #2563eb;
+  --bg: #f8fafc;
+  --text: #1e293b;
+  --accent: #f59e0b;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg);
+  padding: 20px;
+}
+
+.contenedor {
+  max-width: 650px;
+  margin: 0 auto;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.panel {
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+}
+
+button:hover { opacity: 0.9; }
+button:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+.item-producto {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 1px solid #f1f5f9;
+  align-items: center;
+}
+
+.badge-cantidad {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.acciones { display: flex; gap: 5px; }
+.btn-edit { background: var(--accent); width: 40px; }
+.btn-delete { background: #ef4444; width: 40px; }
+
+.error { color: #dc2626; font-size: 0.8rem; height: 1.2rem; margin-bottom: 10px; }
