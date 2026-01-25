@@ -1,42 +1,256 @@
-#root {
-  max-width: 1280px;
+/* --- 1. Estilos Base y Contenedor --- */
+.container {
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  background-color: #ebebeb;
+  padding-bottom: 90px;
+  min-height: 100vh;
+  font-family: 'Proxima Nova', -apple-system, Roboto, Arial, sans-serif;
+  cursor: default; /* Flecha normal para el fondo */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* --- 2. Header y Buscador --- */
+.header {
+  background-color: #4ec88d;
+  padding: 10px 15px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.search-bar {
+  background: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  margin-left: 10px;
+  color: #999;
+  font-size: 14px;
 }
 
-.card {
-  padding: 2em;
+/* Cursor de bloqueo para el buscador en proceso */
+.search-bar input:disabled {
+  cursor: not-allowed;
+  background-color: transparent;
 }
 
-.read-the-docs {
-  color: #888;
+.location {
+  font-size: 13px;
+  color: #333;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* --- 3. Barra de Categorías --- */
+.nav-categories {
+  display: flex;
+  gap: 20px;
+  padding: 12px 20px;
+  background-color: #4ec88d;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.nav-categories span {
+  color: #222;
+  cursor: pointer; 
+  transition: opacity 0.2s;
+}
+
+.nav-categories span:hover {
+  opacity: 0.7;
+}
+
+.nav-categories span.active {
+  font-weight: bold;
+  border-bottom: 2px solid #222;
+}
+
+/* --- 4. Banner Principal --- */
+.main-banner {
+  background: linear-gradient(90deg, #2d775d 0%, #4ec88d 100%);
+  min-height: 160px;
+  margin: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  color: white;
+}
+
+.main-banner h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* --- 5. Iconos de Acción (Círculos) --- */
+.action-icons {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 20px 10px;
+  margin-bottom: 10px;
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #666;
+  transition: transform 0.2s;
+  cursor: pointer; 
+}
+
+.action-item:hover {
+  transform: translateY(-3px);
+}
+
+.icon-placeholder {
+  width: 55px;
+  height: 55px;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #eee;
+  overflow: hidden;
+  transition: background-color 0.2s;
+}
+
+.action-item:hover .icon-placeholder {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.action-svg {
+  width: 60%;
+  height: auto;
+}
+
+/* --- 6. Grid de Productos --- */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 10px;
+}
+
+.product-card {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: 0.3s;
+  cursor: pointer; 
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: scale(1.02);
+}
+
+.product-image-box {
+  width: 100%;
+  height: 140px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px 0;
+  color: #333;
+}
+
+.shipping {
+  color: #00a650;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* --- 7. Barra Inferior (Tab Bar) --- */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1200px;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid #ddd;
+  z-index: 1000;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  color: #666;
+  cursor: pointer;
+}
+
+.cart-fab {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  margin-top: -30px;
+  font-size: 20px;
+  cursor: pointer; /* Manito */
+}
+
+/* --- 8. KEYFRAMES Y ANIMACIONES --- */
+
+/* Pulso para textos "En proceso" */
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.loading-animation {
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+/* Brillo Skeleton para imágenes */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite linear;
+}
+
+/* Onda de pulso para el carrito */
+@keyframes shadowPulse {
+  0% { box-shadow: 0 0 0 0px rgba(78, 200, 141, 0.4); }
+  100% { box-shadow: 0 0 0 15px rgba(78, 200, 141, 0); }
+}
+
+.pulse-orange {
+  animation: shadowPulse 2s infinite;
 }
