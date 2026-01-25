@@ -254,3 +254,104 @@
 .pulse-orange {
   animation: shadowPulse 2s infinite;
 }
+/* Estilos nuevos para la lista dentro del banner */
+.cart-preview-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.cart-badge-item {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  display: inline-block;
+  animation: slideIn 0.3s ease-out;
+}
+
+.items-scroll {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+/* Bolita roja sobre el carrito de la Tab Bar */
+.cart-count-dot {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #f73f3f;
+  color: white;
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  font-weight: bold;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Estilos para las etiquetas del carrito en el banner */
+.cart-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.cart-tag {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  animation: slideIn 0.3s ease-out;
+}
+
+.cart-tag:hover {
+  background: #ff4d4d;
+  border-color: transparent;
+  transform: scale(1.05);
+}
+
+.cart-tag small {
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+/* Bolita roja del contador en el footer */
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #f73f3f;
+  color: white;
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

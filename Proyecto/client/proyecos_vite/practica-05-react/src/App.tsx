@@ -1,5 +1,5 @@
+import { useState } from 'react' // Importamos useState para manejar el carrito
 import './App.css'
-// Importación de tus iconos SVG
 import ofertaIcon from './assets/ofertas mern.svg'
 import afiliadosIcon from './assets/afiliados mern.svg'
 import playIcon from './assets/play mern.svg'
@@ -7,19 +7,30 @@ import cuponesIcon from './assets/cupones mern.svg'
 import otrosIcon from './assets/otros mern.svg'
 
 function App() {
-  // Lista de productos con estado inicial "En proceso..."
+  // Estado para almacenar los nombres de los productos en el carrito
+  const [carrito, setCarrito] = useState<string[]>([]);
+
   const productos = [
-    { id: 1, precio: 'En proceso...', desc: 'En proceso...', color: '#f0f0f0' },
-    { id: 2, precio: 'En proceso...', desc: 'En proceso...', color: '#f9f9f9' },
-    { id: 3, precio: 'En proceso...', desc: 'En proceso...', color: '#eee' },
-    { id: 4, precio: 'En proceso...', desc: 'En proceso...', color: '#f0f0f0' },
-    { id: 5, precio: 'En proceso...', desc: 'En proceso...', color: '#f9f9f9' },
-    { id: 6, precio: 'En proceso...', desc: 'En proceso...', color: '#eee' },
+    { id: 1, nombre: 'Producto 1' },
+    { id: 2, nombre: 'Producto 2' },
+    { id: 3, nombre: 'Producto 3' },
+    { id: 4, nombre: 'Producto 4' },
+    { id: 5, nombre: 'Producto 5' },
+    { id: 6, nombre: 'Producto 6' },
   ];
+
+  // Función para agregar
+  const agregarAlCarrito = (nombre: string) => {
+    setCarrito([...carrito, nombre]);
+  };
+
+  // Función para eliminar un producto específico por su posición (index)
+  const eliminarDelCarrito = (indexAEliminar: number) => {
+    setCarrito(carrito.filter((_, index) => index !== indexAEliminar));
+  };
 
   return (
     <div className="container">
-      {/* 1. Header con Buscador y Ubicación */}
       <header className="header">
         <div className="search-bar">
           <span className="icon">🔍</span>
@@ -28,7 +39,6 @@ function App() {
         <div className="location loading-animation">📍 En proceso...</div>
       </header>
 
-      {/* 2. Barra de Categorías */}
       <nav className="nav-categories">
         <span className="active">Todo</span>
         <span>Celulares</span>
@@ -38,16 +48,30 @@ function App() {
         <span>Vehículos</span>
       </nav>
 
-      {/* 3. Banner Principal */}
+      {/* 3. Banner Principal convertido en Carrito */}
       <section className="main-banner">
         <div className="banner-content">
-          <h2>OFERTAS</h2>
-          <p className="highlight loading-animation">En proceso...</p>
-          <p className="msi loading-animation">En proceso...</p>
+          <h2>CARRITO ({carrito.length})</h2>
+          <div className="cart-preview">
+            {carrito.length === 0 ? (
+              <p className="loading-animation">Haz clic abajo para agregar productos...</p>
+            ) : (
+              <div className="cart-tags">
+                {carrito.map((item, index) => (
+                  <span 
+                    key={index} 
+                    className="cart-tag" 
+                    onClick={() => eliminarDelCarrito(index)}
+                  >
+                    {item} <small>✕</small>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* 4. Botones de Acción (Círculos con SVGs) */}
       <section className="action-icons">
         {[
           { name: 'Ofertas', img: ofertaIcon },
@@ -65,23 +89,28 @@ function App() {
         ))}
       </section>
 
-      {/* 5. Grid de Productos con Efecto Skeleton */}
       <h3 style={{ padding: '0 15px', fontSize: '16px', marginTop: '10px' }}>Visto recientemente</h3>
       <section className="products-grid">
         {productos.map((prod) => (
-          <div key={prod.id} className="product-card">
+          <div 
+            key={prod.id} 
+            className="product-card" 
+            onClick={() => agregarAlCarrito(prod.nombre)}
+          >
             <div className="product-image-box skeleton"></div>
-            <p className="price loading-animation">{prod.precio}</p>
-            <p className="shipping loading-animation">{prod.desc}</p>
+            <p className="price">En proceso...</p>
+            <p className="shipping">Agregar al carrito</p>
           </div>
         ))}
       </section>
 
-      {/* 6. Barra Inferior Fija (Tab Bar) */}
       <footer className="tab-bar">
         <div className="tab-item"><span>🏠</span><small>Inicio</small></div>
         <div className="tab-item"><span>☰</span><small>Cat.</small></div>
-        <div className="cart-fab pulse-orange">🛒</div>
+        <div className="cart-fab pulse-orange">
+          🛒
+          {carrito.length > 0 && <span className="cart-badge">{carrito.length}</span>}
+        </div>
         <div className="tab-item"><span>⚡</span><small>Clips</small></div>
         <div className="tab-item"><span>...</span><small>Más</small></div>
       </footer>
