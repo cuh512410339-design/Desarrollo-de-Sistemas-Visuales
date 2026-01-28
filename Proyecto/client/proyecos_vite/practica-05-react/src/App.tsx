@@ -90,7 +90,7 @@ function App() {
       {/* Navegación e Iconos (Se mantienen igual) */}
       <nav className="nav-categories">
         <span className="active">Todo</span>
-        <span>Celulares</span>
+        <span>Tecnologia</span>
         <span>Moda</span>
         <span>Hogar</span>
       </nav>
