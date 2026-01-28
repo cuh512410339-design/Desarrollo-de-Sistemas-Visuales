@@ -1,0 +1,98 @@
+.session-container {
+  background: white;
+  margin: 15px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  font-family: sans-serif;
+}
+
+.login-form h3, .session-card h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.input-group {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 13px;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.login-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.texto-error {
+  color: #d93025;
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+button[type="submit"] {
+  background: #3483fa;
+  color: white;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.boton-peligro {
+  background: #fff0f0;
+  color: #d93025;
+  border: 1px solid #d93025;
+  font-size: 12px;
+}
+
+.fecha-registro {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+  margin-top: 15px;
+}
+.login-box {
+  min-height: 250px; /* Evita que la página "salte" al cambiar de layout */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn-confirmar {
+  background-color: #3483fa; /* Azul Mercado Libre */
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn-confirmar:hover {
+  background-color: #2968c8;
+}

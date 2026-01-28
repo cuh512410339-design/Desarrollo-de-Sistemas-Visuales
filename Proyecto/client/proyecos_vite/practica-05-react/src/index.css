@@ -1,18 +1,19 @@
+/* Limpieza total de estilos por defecto de Vite */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
-  display: block; 
+  display: block; /* Importante: que no sea flex para que no se mueva el layout */
   background-color: #ebebeb; 
   color: #333;
+  -webkit-font-smoothing: antialiased;
 }
 
 :root {
   font-family: 'Proxima Nova', -apple-system, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
 }
 
 * {
-  box-sizing: border-box; /* Esto evita que el padding "infle" los elementos */
+  box-sizing: border-box;
 }
