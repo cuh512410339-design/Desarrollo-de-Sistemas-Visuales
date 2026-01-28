@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import LoginForm from './LoginForm'
+import LoginForm from './Login/LoginForm'
 
 // Iconos
 import ofertaIcon from './assets/ofertas mern.svg'
