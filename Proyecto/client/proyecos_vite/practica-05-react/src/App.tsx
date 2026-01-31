@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import LoginForm from './Login/LoginForm'
+import RegistroForm from './Registro/RegistroForm' // Asegúrate de haber creado este archivo
+
 
 // Iconos
 import ofertaIcon from './assets/ofertas mern.svg'
@@ -11,8 +13,10 @@ import otrosIcon from './assets/otros mern.svg'
 
 function App() {
   const [carrito, setCarrito] = useState<string[]>([]);
-  // Nuevo estado para controlar si el usuario entró
   const [sesionActiva, setSesionActiva] = useState<any>(null);
+  
+  // Nuevo estado para decidir si mostramos el Login o el Registro Dinámico
+  const [mostrarRegistro, setMostrarRegistro] = useState(false);
 
   // Al cargar, verificamos si ya había una sesión guardada
   useEffect(() => {
@@ -39,18 +43,38 @@ function App() {
     setCarrito(carrito.filter((_, index) => index !== indexAEliminar));
   };
 
-  // --- PASO 1: LÓGICA DE BLOQUEO ---
-  // Si no hay sesión activa, mostramos ÚNICAMENTE el login
-  if (!sesionActiva) {
-    return (
-      <div className="login-wrapper">
-        <LoginForm onLoginSuccess={(datos: any) => setSesionActiva(datos)} />
-      </div>
-    );
-  }
+// --- PASO 1: LÓGICA DE ACCESO (LOGIN / REGISTRO) ---
+if (!sesionActiva) {
+  return (
+    <div className="login-wrapper fade-in">
+      {mostrarRegistro ? (
+        <RegistroForm 
+          onFinalizar={() => setMostrarRegistro(false)} 
+          onRegistroExitoso={(datos) => {
+            alert(`¡Usuario ${datos.user} registrado! Ahora inicia sesión.`);
+            setMostrarRegistro(false); 
+          }}
+        />
+      ) : (
+        <div className="auth-container-wrapper">
+          <LoginForm onLoginSuccess={(datos: any) => setSesionActiva(datos)} />
+          
+          <div className="register-link-container">
+            <p>¿No tienes una cuenta aún?</p>
+            <button 
+              className="btn-text-link"
+              onClick={() => setMostrarRegistro(true)}
+            >
+              Crea una cuenta aquí
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
-  // --- PASO 2: INTERFAZ PRINCIPAL ---
-  // Solo se llega aquí si sesionActiva tiene datos
+  // --- PASO 2: INTERFAZ PRINCIPAL DE LA TIENDA ---
   return (
     <div className="container">
       <header className="header">
@@ -63,7 +87,7 @@ function App() {
           onClick={() => { localStorage.removeItem('mern_session'); setSesionActiva(null); }}
           style={{ cursor: 'pointer', color: 'white' }}
         >
-          {sesionActiva.user} ||  Salir 
+          {sesionActiva.user} || Salir 
         </div>
       </header>
 
@@ -87,7 +111,6 @@ function App() {
         </div>
       </section>
 
-      {/* Navegación e Iconos (Se mantienen igual) */}
       <nav className="nav-categories">
         <span className="active">Todo</span>
         <span>Tecnologia</span>
@@ -132,7 +155,6 @@ function App() {
         <div className="tab-item"><span>⚡</span><small>Clips</small></div>
         <div className="tab-item"><span>...</span><small>Más</small></div>
       </footer>
-      
     </div>
   )
   

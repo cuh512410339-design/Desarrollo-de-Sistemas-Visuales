@@ -1,0 +1,157 @@
+/* Layout y Contenedor */
+.registro-wrapper-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.circle-brand {
+  width: 220px;
+  height: 220px;
+  background-color: #38b6ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.brand-image-logo {
+  width: 120px;
+  filter: brightness(0) invert(1); /* Hace el icono blanco */
+}
+
+/* Tarjeta Principal */
+.registro-card {
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  width: 400px;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+}
+
+/* BARRAS DE PROGRESO (Importante) */
+.progreso-wrapper {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.progress-bg {
+  width: 100%;
+  height: 10px;
+  background-color: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+.progress-fill.storage {
+  background-color: #38b6ff;
+}
+
+/* Formulario e Inputs */
+.campo-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.campo-container label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.input-dinamico {
+  padding: 12px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  outline: none;
+}
+
+.input-dinamico:focus {
+  border-color: #a4e91b;
+}
+
+.terms-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  margin: 15px 0;
+}
+
+/* Botones */
+.btn-save {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #a4e91b;
+  transition: all 0.3s;
+}
+
+.btn-save:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Sección de Registros (Estilo Tabla) */
+.registros-section {
+  margin-top: 25px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+.tabla-mini-container {
+  max-height: 150px;
+  overflow-y: auto;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.lista-mini {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.lista-mini li {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+}
+
+.btn-delete-all {
+  width: 100%;
+  background: #ffdbdb;
+  color: #ff4d4d;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #666;
+  text-decoration: underline;
+  cursor: pointer;
+}

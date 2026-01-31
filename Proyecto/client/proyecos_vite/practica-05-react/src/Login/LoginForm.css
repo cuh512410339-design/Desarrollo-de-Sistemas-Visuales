@@ -1,98 +1,113 @@
-.session-container {
-  background: white;
-  margin: 15px;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  font-family: sans-serif;
-}
-
-.login-form h3, .session-card h3 {
-  margin-top: 0;
+/* Contenedor principal de la tarjeta */
+.login-card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   color: #333;
+  margin: auto;
 }
 
-.input-group {
-  margin-bottom: 12px;
-  display: flex;
-  flex-direction: column;
+.auth-header h2 {
+  font-size: 26px;
+  margin-bottom: 8px;
+  color: #1a1a1a;
 }
 
-.input-group label {
+.auth-header p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+/* Inputs Estilizados */
+.input-field {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-field label {
+  display: block;
   font-size: 13px;
-  margin-bottom: 4px;
-  font-weight: bold;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
-.login-form input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.input-field input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  box-sizing: border-box;
+  font-size: 15px;
+  transition: all 0.3s;
 }
 
-.texto-error {
-  color: #d93025;
-  font-size: 13px;
-  margin: 10px 0;
+.input-field input:focus {
+  border-color: #00a650; /* Verde a juego con tu banner */
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 166, 80, 0.1);
 }
 
-button {
-  padding: 10px 20px;
-  border-radius: 4px;
+/* Botones Profesionales */
+.btn-main {
+  width: 100%;
+  padding: 14px;
+  background: #00a650; /* Verde Mercado Libre */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.btn-main:hover {
+  background: #008f45;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  background: transparent;
+  color: #666;
   border: none;
   cursor: pointer;
-  font-weight: bold;
+  text-decoration: underline;
+  font-size: 14px;
 }
 
-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+/* Detalles de la sesión guardada */
+.session-details {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 25px;
 }
 
-button[type="submit"] {
-  background: #3483fa;
-  color: white;
-}
-
-.card-header {
+.detail-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.boton-peligro {
-  background: #fff0f0;
-  color: #d93025;
-  border: 1px solid #d93025;
-  font-size: 12px;
-}
-
-.fecha-registro {
-  font-size: 11px;
-  color: #666;
-  font-style: italic;
-  margin-top: 15px;
-}
-.login-box {
-  min-height: 250px; /* Evita que la página "salte" al cambiar de layout */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.btn-confirmar {
-  background-color: #3483fa; /* Azul Mercado Libre */
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100%;
   margin-bottom: 10px;
 }
 
-.btn-confirmar:hover {
-  background-color: #2968c8;
+.detail-item span {
+  font-size: 13px;
+  color: #888;
+}
+
+.status-badge {
+  display: inline-block;
+  background: #e6f7ee;
+  color: #00a650;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 15px;
 }

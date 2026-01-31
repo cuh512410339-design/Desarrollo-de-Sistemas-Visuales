@@ -355,3 +355,87 @@
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* --- 9. Pantalla de Acceso (Login/Registro) - Mejoras --- */
+
+.auth-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px; /* Evita que el login sea demasiado ancho */
+  animation: slideIn 0.5s ease-out;
+}
+
+.register-link-container {
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.3); /* Fondo semitransparente */
+  padding: 10px 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(5px); /* Efecto de cristal */
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.register-link-container p {
+  margin: 0;
+  font-size: 14px;
+  color: #1a3a0a;
+}
+
+.btn-text-link {
+  background: none;
+  border: none;
+  color: #1a3a0a;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 5px;
+  transition: all 0.2s;
+}
+
+.btn-text-link:hover {
+  color: #000;
+  transform: scale(1.05);
+}
+
+/* Reutilizamos tu animación slideIn para la entrada suave */
+.fade-in {
+  animation: slideIn 0.4s ease-in-out;
+}
+/* Este es el contenedor que envuelve todo cuando no hay sesión */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Ocupa todo el alto de la pantalla */
+  width: 100%;
+  /* Fondo Verde Lima Eléctrico con degradado */
+  background: linear-gradient(135deg, #d4fc79 0%, #40f774 100%); 
+  margin: 0;
+  padding: 0;
+  position: fixed; /* Asegura que cubra todo incluso si hay scroll */
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+/* Contenedor interno para asegurar el centrado de la tarjeta */
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+}
+
+/* Ajuste para el botón de cambio (¿No tienes cuenta?) */
+.btn-switch {
+  margin-top: 20px;
+  background: none;
+  border: none;
+  color: #2e5a1c; /* Verde oscuro para legibilidad sobre el lima */
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+}
