@@ -85,16 +85,23 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           </form>
         </div>
       ) : (
-        <div className="auth-content">
-          <div className="auth-header">
-            <div className="status-badge">Sesión Detectada</div>
-            <h2>¡Hola de nuevo, {sesion.user}!</h2>
-          </div>
-          <div className="action-group">
-            <button onClick={handleConfirmar} className="btn-main">Entrar 🚀</button>
-            <button onClick={handleEliminar} className="btn-secondary">Usar otra cuenta</button>
-          </div>
-        </div>
+       <div className="auth-content">
+  <div className="auth-header">
+    <div className="status-badge">Sesión Detectada</div>
+    <h2>¡Hola de nuevo, {sesion.user}!</h2>
+    
+    {/* Añadimos estas líneas para mostrar la información técnica */}
+    <div className="user-info-detail" style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
+      <p><strong>Correo:</strong> {sesion.email}</p>
+      <p><strong>Registrado el:</strong> {sesion.date}</p>
+    </div>
+  </div>
+
+  <div className="action-group">
+    <button onClick={handleConfirmar} className="btn-main">Entrar 🚀</button>
+    <button onClick={handleEliminar} className="btn-secondary">Usar otra cuenta</button>
+  </div>
+</div>
       )}
     </div>
   );
