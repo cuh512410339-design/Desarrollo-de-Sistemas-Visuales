@@ -75,10 +75,22 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
       setProgresoGuardado(avance);
       if (avance >= 100) {
         clearInterval(intervalo);
-        const nuevoUsuario = { user: usuario, email: correo, date: new Date().toLocaleString() };
+        
+        // ¡CAMBIO AQUÍ!: Agregamos 'password' al objeto
+        const nuevoUsuario = { 
+          user: usuario, 
+          email: correo, 
+          password: password, // <--- ESTA LÍNEA ES VITAL
+          date: new Date().toLocaleString() 
+        };
+        
         const listaActualizada = [...registros, nuevoUsuario];
         localStorage.setItem('usuarios_registrados', JSON.stringify(listaActualizada));
         localStorage.setItem('mern_session', JSON.stringify(nuevoUsuario));
+        
+        // Actualizamos el estado local para que se vea en la lista de abajo
+        setRegistros(listaActualizada);
+        setEstaGuardando(false);
         onRegistroExitoso(nuevoUsuario);
       }
     }, 200);
@@ -87,6 +99,15 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
   const eliminarRegistros = () => {
     localStorage.removeItem('usuarios_registrados');
     setRegistros([]);
+  };
+
+  const eliminarUnRegistro = (indexAEliminar: number) => {
+    const confirmacion = window.confirm("¿Eliminar este usuario específico?");
+    if (confirmacion) {
+      const nuevaLista = registros.filter((_, index) => index !== indexAEliminar);
+      setRegistros(nuevaLista);
+      localStorage.setItem('usuarios_registrados', JSON.stringify(nuevaLista));
+    }
   };
 
   return (
@@ -156,16 +177,59 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
         </form>
 
         <div className="registros-section">
-          <h3>Registros en LocalStorage</h3>
           <div className="tabla-mini-container">
+            <h3>Registros actuales</h3>
             {registros.length === 0 ? (
               <p className="no-registros">No hay usuarios registrados</p>
             ) : (
-              <ul className="lista-mini">
-                {registros.map((reg, i) => (
-                  <li key={i}><strong>{reg.user}</strong> - <small>{reg.email}</small></li>
-                ))}
-              </ul>
+              <div className="registros-section">
+  
+  <div className="tabla-mini-container">
+    {registros.length === 0 ? (
+      <p className="no-registros">No hay usuarios registrados</p>
+    ) : (
+      <ul className="lista-mini">
+        {registros.map((reg, i) => (
+          <li key={i} style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            padding: '8px',
+            borderBottom: '1px solid #eee' 
+          }}>
+            <span><strong>{reg.user}</strong> - <small>{reg.email}</small></span>
+            
+            {/* BOTÓN INDIVIDUAL: Aquí conectamos tu función */}
+            <button 
+              onClick={() => eliminarUnRegistro(i)} 
+              style={{ 
+                background: '#ffeded', 
+                border: '1px solid #ffcaca', 
+                color: '#d32f2f', 
+                cursor: 'pointer', 
+                borderRadius: '4px',
+                padding: '2px 8px',
+                fontWeight: 'bold'
+              }}
+              title="Eliminar este usuario"
+            >
+              ✕
+            </button>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+  
+  <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+    <button onClick={eliminarRegistros} className="btn-delete-all" style={{ flex: 1 }}>
+      Eliminar todos
+    </button>
+    <button type="button" onClick={onFinalizar} className="btn-back" style={{ flex: 1 }}>
+      Volver al Login
+    </button>
+  </div>
+</div>
             )}
           </div>
           <button onClick={eliminarRegistros} className="btn-delete-all">Eliminar registros</button>

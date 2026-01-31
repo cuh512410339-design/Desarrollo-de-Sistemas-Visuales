@@ -23,13 +23,19 @@
   width: 150px;
 }
 
-/* Tarjeta Principal */
+/* Tarjeta Principal Actualizada */
 .registro-card {
   background: white;
   padding: 30px;
   border-radius: 25px;
   width: 400px;
   box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+  
+  /* Nuevos ajustes */
+  max-height: 85vh; /* Ocupa máximo el 85% de la altura de la pantalla */
+  overflow-y: auto; /* Si el contenido es mucho, permite hacer scroll dentro de la tarjeta */
+  display: flex;
+  flex-direction: column;
 }
 
 /* BARRAS DE PROGRESO (Importante) */
