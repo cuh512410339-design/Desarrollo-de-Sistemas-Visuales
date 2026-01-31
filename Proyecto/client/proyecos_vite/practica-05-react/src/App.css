@@ -147,7 +147,7 @@
 }
 
 .product-card {
-  background: white;
+  background: rgb(255, 255, 255);
   padding: 12px;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -438,4 +438,42 @@
   cursor: pointer;
   text-decoration: underline;
   font-size: 14px;
+}
+/* Efecto cuando arrastras una tarjeta */
+.product-card.dragging {
+  background: #e3f2fd;
+  border: 2px dashed #2196f3;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  transform: rotate(3deg);
+}
+
+/* Efecto cuando pasas un producto sobre el banner */
+.main-banner.drag-over {
+  background: linear-gradient(135deg, #4caf50 0%, #81c784 100%) !important;
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+}
+
+/* Animación de las etiquetas del carrito */
+.cart-tag {
+  display: inline-flex;
+  align-items: center;
+  background: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+/* Color de resalte cuando arrastras algo sobre el banner */
+.drag-over-active {
+  background-color: #2e7d32 !important; /* Verde oscuro para buen contraste */
+  border: 2px dashed #ffeb3b;
+  transition: all 0.2s ease;
+}
+
+/* Efecto visual en la tarjeta que estás moviendo */
+.product-card[data-rbd-draggable-id] {
+  cursor: grab;
 }

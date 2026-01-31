@@ -3,6 +3,8 @@ import './App.css'
 import LoginForm from './Login/LoginForm'
 import RegistroForm from './Registro/RegistroForm' // Asegúrate de haber creado este archivo
 
+import { motion, AnimatePresence } from 'framer-motion'; // Para animaciones
+import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'; // Para Drag & Drop
 
 // Iconos
 import ofertaIcon from './assets/ofertas mern.svg'
@@ -17,7 +19,24 @@ function App() {
   
   // Nuevo estado para decidir si mostramos el Login o el Registro Dinámico
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
+  // --- TEMPORIZADOR (Lógica) ---
+  const [tiempo, setTiempo] = useState(600); // 10 minutos
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTiempo((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+  
+
+  const formatTiempo = (segundos: number) => {
+    
+    const m = Math.floor(segundos / 60);
+    const s = segundos % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+  
   // Al cargar, verificamos si ya había una sesión guardada
   useEffect(() => {
     const saved = localStorage.getItem('mern_session');
@@ -43,8 +62,29 @@ function App() {
     setCarrito(carrito.filter((_, index) => index !== indexAEliminar));
   };
 
-// --- PASO 1: LÓGICA DE ACCESO (LOGIN / REGISTRO) ---
-if (!sesionActiva) {
+// --- PERSISTENCIA ---
+  useEffect(() => {
+    const guardado = localStorage.getItem('mern_carrito');
+    if (guardado) setCarrito(JSON.parse(guardado));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('mern_carrito', JSON.stringify(carrito));
+  }, [carrito]);
+
+  // --- LÓGICA DRAG AND DROP (Añadir aquí) ---
+  const alTerminarArrastre = (result: DropResult) => {
+    const { destination, draggableId } = result;
+    if (!destination) return;
+
+    // Si el producto cae en la zona del banner (carrito)
+    if (destination.droppableId === 'zona-carrito') {
+      const productoEncontrado = productos.find(p => p.id.toString() === draggableId);
+      if (productoEncontrado) agregarAlCarrito(productoEncontrado.nombre);
+    }
+  };
+  // --- PASO 1: LÓGICA DE ACCESO (LOGIN / REGISTRO) ---
+  if (!sesionActiva) {
   return (
     <div className="login-wrapper fade-in">
       {mostrarRegistro ? (
@@ -72,88 +112,134 @@ if (!sesionActiva) {
 
   // --- PASO 2: INTERFAZ PRINCIPAL DE LA TIENDA ---
   return (
-    <div className="container">
-      <header className="header">
-        <div className="search-bar">
-          <span className="icon">🔍</span>
-          <input type="text" placeholder={`Buscar`} disabled />
-        </div>
-        <div 
-          className="location" 
-          onClick={() => { localStorage.removeItem('mern_session'); setSesionActiva(null); }}
-          style={{ cursor: 'pointer', color: 'white' }}
-        >
-          {sesionActiva.user} || Salir 
-        </div>
-      </header>
+    <DragDropContext onDragEnd={alTerminarArrastre}>
+      <div className="container">
+        <header className="header">
+          <div className="search-bar">
+            <span className="icon">🔍</span>
+            <input type="text" placeholder={`Buscar`} disabled />
+          </div>
+          <div 
+            className="location" 
+            onClick={() => { localStorage.removeItem('mern_session'); setSesionActiva(null); }}
+            style={{ cursor: 'pointer', color: 'white' }}
+          >
+            {sesionActiva.user} || Salir 
+          </div>
+        </header>
 
-      <section className="main-banner">
-        <div className="banner-content">
-          <h2>BIENVENIDO, {sesionActiva.user.toUpperCase()}</h2>
-          <p>CARRITO ({carrito.length})</p>
-          <div className="cart-preview">
-            {carrito.length === 0 ? (
-              <p className="loading-animation">Agrega productos para comenzar...</p>
-            ) : (
-              <div className="cart-tags">
-                {carrito.map((item, index) => (
-                  <span key={index} className="cart-tag" onClick={() => eliminarDelCarrito(index)}>
-                    {item} <small>✕</small>
-                  </span>
-                ))}
+        {/* --- BANNER COMO ZONA DE SOLTAR (DROP) --- */}
+        <Droppable droppableId="zona-carrito">
+          {(provided, snapshot) => (
+            <section 
+              className={`main-banner ${snapshot.isDraggingOver ? 'drag-over-active' : ''}`}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <div className="banner-content">
+                <div className="timer-display" style={{ fontSize: '14px', fontWeight: 'bold', color: '#ffeb3b', marginBottom: '5px' }}>
+                  ⏳ La oferta termina en: {formatTiempo(tiempo)}
+                </div>
+                <h2>BIENVENIDO, {sesionActiva.user.toUpperCase()}</h2>
+                <p>CARRITO ({carrito.length})</p>
+                <div className="cart-preview">
+                  {carrito.length === 0 ? (
+                    <p className="loading-animation">Arrastra productos aquí...</p>
+                  ) : (
+                    <div className="cart-tags">
+                      <AnimatePresence>
+                        {carrito.map((item, index) => (
+                          <motion.span 
+                            key={`${item}-${index}`}
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            className="cart-tag" 
+                            onClick={() => eliminarDelCarrito(index)}
+                          >
+                            {item} <small>✕</small>
+                          </motion.span>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        </div>
-      </section>
+              {provided.placeholder}
+            </section>
+          )}
+        </Droppable>
 
-      <nav className="nav-categories">
-        <span className="active">Todo</span>
-        <span>Tecnologia</span>
-        <span>Moda</span>
-        <span>Hogar</span>
-      </nav>
+        <nav className="nav-categories">
+          <span className="active">Todo</span>
+          <span>Tecnologia</span>
+          <span>Moda</span>
+          <span>Hogar</span>
+        </nav>
 
-      <section className="action-icons">
-        {[
-          { name: 'Ofertas', img: ofertaIcon },
-          { name: 'Afiliados', img: afiliadosIcon },
-          { name: 'Play', img: playIcon },
-          { name: 'Cupones', img: cuponesIcon },
-          { name: 'Más', img: otrosIcon }
-        ].map((item) => (
-          <div key={item.name} className="action-item">
-            <div className="icon-placeholder">
-              <img src={item.img} alt={item.name} className="action-svg" />
+        {/* --- TUS ICONOS SVG ORIGINALES --- */}
+        <section className="action-icons">
+          {[
+            { name: 'Ofertas', img: ofertaIcon },
+            { name: 'Afiliados', img: afiliadosIcon },
+            { name: 'Play', img: playIcon },
+            { name: 'Cupones', img: cuponesIcon },
+            { name: 'Más', img: otrosIcon }
+          ].map((item) => (
+            <div key={item.name} className="action-item">
+              <div className="icon-placeholder">
+                <img src={item.img} alt={item.name} className="action-svg" />
+              </div>
+              <span>{item.name}</span>
             </div>
-            <span>{item.name}</span>
-          </div>
-        ))}
-      </section>
+          ))}
+        </section>
 
-      <h3 style={{ padding: '0 15px', fontSize: '16px', marginTop: '10px' }}>Visto recientemente</h3>
-      <section className="products-grid">
-        {productos.map((prod) => (
-          <div key={prod.id} className="product-card" onClick={() => agregarAlCarrito(prod.nombre)}>
-            <div className="product-image-box skeleton"></div>
-            <p className="price">Sugerido para ti</p>
-            <p className="shipping">Agregar al carrito</p>
-          </div>
-        ))}
-      </section>
+        <h3 style={{ padding: '0 15px', fontSize: '16px', marginTop: '10px' }}>Visto recientemente</h3>
 
-      <footer className="tab-bar">
-        <div className="tab-item"><span>🏠</span><small>Inicio</small></div>
-        <div className="tab-item"><span>☰</span><small>Cat.</small></div>
-        <div className="cart-fab pulse-orange">
-          🛒 {carrito.length > 0 && <span className="cart-badge">{carrito.length}</span>}
-        </div>
-        <div className="tab-item"><span>⚡</span><small>Clips</small></div>
-        <div className="tab-item"><span>...</span><small>Más</small></div>
-      </footer>
-    </div>
+        {/* --- GRID COMO ZONA DE ARRASTRE (DRAG) --- */}
+        <Droppable droppableId="productos-grid" isDropDisabled={true}>
+          {(provided) => (
+            <section 
+              className="products-grid" 
+              ref={provided.innerRef} 
+              {...provided.droppableProps}
+            >
+              {productos.map((prod, index) => (
+                <Draggable key={prod.id} draggableId={prod.id.toString()} index={index}>
+                  {(provided, snapshot) => (
+                    <div 
+                      className={`product-card ${snapshot.isDragging ? 'dragging' : ''}`}
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      onClick={() => agregarAlCarrito(prod.nombre)}
+                    >
+                      <div className="product-image-box skeleton"></div>
+                      <p className="price">{prod.nombre}</p>
+                      <p className="shipping">Arrastra al carrito</p>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </section>
+          )}
+        </Droppable>
+
+        {/* --- TU FOOTER ORIGINAL --- */}
+        <footer className="tab-bar">
+          <div className="tab-item"><span>🏠</span><small>Inicio</small></div>
+          <div className="tab-item"><span>☰</span><small>Cat.</small></div>
+          <div className="cart-fab pulse-orange">
+            🛒 {carrito.length > 0 && <span className="cart-badge">{carrito.length}</span>}
+          </div>
+          <div className="tab-item"><span>⚡</span><small>Clips</small></div>
+          <div className="tab-item"><span>...</span><small>Más</small></div>
+        </footer>
+      </div>
+    </DragDropContext>
   )
-  
 }
 
 export default App
