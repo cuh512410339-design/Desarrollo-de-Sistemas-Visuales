@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import './RegistroForm.css';
 
+import ofertaIcon from '../assets/carrito.svg';
+
 interface Usuario {
   user: string;
   email: string;
@@ -91,7 +93,11 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
     <div className="registro-wrapper-layout">
       <div className="visual-section">
         <div className="circle-brand">
-          <img src="https://cdn-icons-png.flaticon.com/512/1160/1160358.png" alt="Logo" className="brand-image-logo" />
+          <img 
+            src={ofertaIcon} 
+            alt="Logo Ofertas" 
+            className="brand-image-logo" 
+          />
         </div>
       </div>
 

@@ -11,7 +11,7 @@
 .circle-brand {
   width: 220px;
   height: 220px;
-  background-color: #38b6ff;
+  background-color: #76e698;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -20,8 +20,7 @@
 }
 
 .brand-image-logo {
-  width: 120px;
-  filter: brightness(0) invert(1); /* Hace el icono blanco */
+  width: 150px;
 }
 
 /* Tarjeta Principal */
