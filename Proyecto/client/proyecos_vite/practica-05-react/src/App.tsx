@@ -50,21 +50,17 @@ if (!sesionActiva) {
       {mostrarRegistro ? (
         <RegistroForm 
           onFinalizar={() => setMostrarRegistro(false)} 
-          onRegistroExitoso={(datos) => {
-            alert(`¡Usuario ${datos.user} registrado! Ahora inicia sesión.`);
+          onRegistroExitoso={() => {
+            alert("¡Registro exitoso! Por favor inicia sesión.");
             setMostrarRegistro(false); 
           }}
         />
       ) : (
         <div className="auth-container-wrapper">
           <LoginForm onLoginSuccess={(datos: any) => setSesionActiva(datos)} />
-          
           <div className="register-link-container">
             <p>¿No tienes una cuenta aún?</p>
-            <button 
-              className="btn-text-link"
-              onClick={() => setMostrarRegistro(true)}
-            >
+            <button className="btn-text-link" onClick={() => setMostrarRegistro(true)}>
               Crea una cuenta aquí
             </button>
           </div>
