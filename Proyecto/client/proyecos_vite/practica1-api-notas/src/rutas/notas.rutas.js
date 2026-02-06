@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
         }
         //Crear una nueva nota
         const notaCreada = await Nota.create({ texto:texto.trim() });
-        return rest.status(201).json(notaCreada);
+        return res.status(201).json(notaCreada);
     } catch (error) {
         console.error("Error al crear la nota:", error);
         return res.status(500).json({ mensaje: "Error interno del servidor." });
@@ -37,5 +37,13 @@ router.get("/", async (req, res) => {
         return res.status(500).json({ mensaje: "Error interno del servidor." });
     }
 });
-
+// DELETE: Borrar todas las notas (para limpiar la práctica)
+router.delete('/limpiar', async (req, res) => {
+    try {
+        await Nota.deleteMany({});
+        res.json({ mensaje: "Todas las notas han sido eliminadas" });
+    } catch (error) {
+        res.status(500).json({ mensaje: "Error al limpiar", error: error.message });
+    }
+});
 module.exports = router;
