@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>API Notas - Green GUI</title>
+    <style>
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #1b5e20;
+            --bg-color: #0a0f0a;
+            --text-color: #a5d6a7;
+        }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace; 
+            max-width: 600px; 
+            margin: 40px auto; 
+            padding: 20px;
+            border: 1px solid var(--dark-green);
+        }
+        h2 { border-bottom: 2px solid var(--primary-green); padding-bottom: 10px; color: var(--primary-green); }
+        .input-group { margin-bottom: 20px; display: flex; gap: 10px; }
+        input { 
+            flex-grow: 1; padding: 10px; 
+            background: #111; border: 1px solid var(--dark-green); 
+            color: var(--primary-green); outline: none;
+        }
+        button { 
+            padding: 10px 20px; cursor: pointer; 
+            background: var(--dark-green); color: white; border: none; 
+            transition: 0.3s;
+        }
+        button:hover { background: var(--primary-green); color: black; }
+        .nota { 
+            background: #121212; padding: 15px; margin: 10px 0; 
+            border: 1px solid #333; border-left: 5px solid var(--primary-green); 
+        }
+        .nota-id { font-size: 0.7em; color: #555; display: block; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h2>>_ SISTEMA_NOTAS_API</h2>
+    
+    <div class="input-group">
+        <input type="text" id="inputNota" placeholder="Ingresar nuevo registro...">
+        <button onclick="crearNota()">EJECUTAR_POST</button>
+    </div>
+
+    <div id="listaNotas"></div>
+
+    <script>
+        const API_URL = 'http://localhost:4000/api/notas';
+
+        // GET por FrontEnd
+        async function cargarNotas() {
+            try {
+                const res = await fetch(API_URL);
+                const notas = await res.json();
+                const div = document.getElementById('listaNotas');
+                div.innerHTML = notas.map(n => `
+                    <div class="nota">
+                        <div>${n.texto}</div>
+                        <span class="nota-id">ID: ${n._id} | FECHA: ${new Date(n.createdAt).toLocaleString()}</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error("Error en GET:", error);
+            }
+        }
+
+        // POST por FrontEnd
+        async function crearNota() {
+            const input = document.getElementById('inputNota');
+            if (input.value.length < 5) return alert("Mínimo 5 caracteres");
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto: input.value })
+                });
+                input.value = '';
+                cargarNotas();
+            } catch (error) {
+                console.error("Error en POST:", error);
+            }
+        }
+
+        cargarNotas();
+    </script>
+</body>
+</html>
