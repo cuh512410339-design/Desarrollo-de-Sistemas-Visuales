@@ -24,22 +24,43 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Obtener la base de datos local
-    const registrados: Usuario[] = JSON.parse(localStorage.getItem('usuarios_registrados') || '[]');
+    try {
+      // 1. Intentamos validar con la API usando la variable de entorno
+      const url = `${import.meta.env.VITE_API_URL}/usuarios?user=${userValue.trim()}&password=${passValue}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) throw new Error("Error en el servidor");
 
-    // 2. Buscar coincidencia de nombre y contraseña
-    const usuarioValido = registrados.find(
-      (u) => u.user.trim() === userValue.trim() && u.password === passValue
-    );
+      const usuariosEncontrados = await response.json();
+      
+      if (usuariosEncontrados.length > 0) {
+        const usuarioValido = usuariosEncontrados[0];
+        localStorage.setItem('mern_session', JSON.stringify(usuarioValido));
+        setSesion(usuarioValido);
+        console.log("✅ Autenticado vía MongoDB");
+      } else {
+        alert("❌ Usuario o contraseña incorrectos.");
+      }
 
-    if (usuarioValido) {
-      localStorage.setItem('mern_session', JSON.stringify(usuarioValido));
-      setSesion(usuarioValido);
-    } else {
-      alert("❌ Usuario o contraseña incorrectos.");
+    } catch (error) {
+      // 2. FALLBACK: Si el servidor no responde
+      console.warn("⚠️ Servidor offline, intentando validación local...");
+      const registrados: Usuario[] = JSON.parse(localStorage.getItem('usuarios_registrados') || '[]');
+      
+      const usuarioValido = registrados.find(
+        (u) => u.user.trim() === userValue.trim() && u.password === passValue
+      );
+
+      if (usuarioValido) {
+        localStorage.setItem('mern_session', JSON.stringify(usuarioValido));
+        setSesion(usuarioValido);
+        alert("ℹ️ Sesión iniciada en modo local (Offline).");
+      } else {
+        alert("❌ Credenciales no encontradas.");
+      }
     }
   };
 

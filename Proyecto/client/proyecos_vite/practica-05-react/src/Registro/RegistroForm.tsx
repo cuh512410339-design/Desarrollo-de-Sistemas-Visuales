@@ -6,6 +6,7 @@ import ofertaIcon from '../assets/carrito.svg';
 interface Usuario {
   user: string;
   email: string;
+  password?: string; // Agregamos esto como opcional
   date: string;
 }
 
@@ -53,9 +54,20 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
   }, [usuario, correo, password]);
 
   useEffect(() => {
-    const guardados = JSON.parse(localStorage.getItem('usuarios_registrados') || '[]');
-    setRegistros(guardados);
-  }, []);
+  const cargarUsuarios = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`);
+      if (!response.ok) throw new Error("Error en servidor");
+      const datos = await response.json();
+      setRegistros(datos);
+    } catch (error) {
+      console.log("Servidor offline, cargando de LocalStorage (Fallback)");
+      const guardados = JSON.parse(localStorage.getItem('usuarios_registrados') || '[]');
+      setRegistros(guardados);
+    }
+  };
+  cargarUsuarios();
+}, []);
 
   // Solo suma progreso si NO hay errores y hay contenido
   const progresoLlenado = useMemo(() => {
@@ -66,35 +78,50 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
     return puntos;
   }, [usuario, correo, password, validaciones]);
 
-  const manejarGuardado = (e: React.FormEvent) => {
-    e.preventDefault();
-    setEstaGuardando(true);
-    let avance = 0;
-    const intervalo = setInterval(() => {
-      avance += 20;
-      setProgresoGuardado(avance);
-      if (avance >= 100) {
-        clearInterval(intervalo);
-        
-        // ¡CAMBIO AQUÍ!: Agregamos 'password' al objeto
-        const nuevoUsuario = { 
-          user: usuario, 
-          email: correo, 
-          password: password, // <--- ESTA LÍNEA ES VITAL
-          date: new Date().toLocaleString() 
-        };
-        
-        const listaActualizada = [...registros, nuevoUsuario];
-        localStorage.setItem('usuarios_registrados', JSON.stringify(listaActualizada));
-        localStorage.setItem('mern_session', JSON.stringify(nuevoUsuario));
-        
-        // Actualizamos el estado local para que se vea en la lista de abajo
-        setRegistros(listaActualizada);
-        setEstaGuardando(false);
-        onRegistroExitoso(nuevoUsuario);
-      }
-    }, 200);
+  const manejarGuardado = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setEstaGuardando(true);
+  setProgresoGuardado(20);
+
+  const nuevoUsuario = { 
+    user: usuario, 
+    email: correo, 
+    password: password, // Ahora sí se enviará a MongoDB
+    date: new Date().toLocaleString() 
   };
+
+  try {
+    setProgresoGuardado(60);
+    // Usamos la variable de entorno
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nuevoUsuario)
+    });
+
+    if (!response.ok) throw new Error("Error en el servidor");
+
+    const usuarioGuardado = await response.json();
+    
+    setProgresoGuardado(100);
+    setRegistros(prev => [...prev, usuarioGuardado]);
+    alert("✅ Registrado con éxito en MongoDB");
+
+  } catch (error) {
+    // FALLBACK
+    console.error("Modo Fallback activado:", error);
+    const listaActualizada = [...registros, nuevoUsuario];
+    localStorage.setItem('usuarios_registrados', JSON.stringify(listaActualizada));
+    setRegistros(listaActualizada);
+    alert("⚠️ Servidor offline. Guardado en LocalStorage.");
+  } finally {
+    setTimeout(() => {
+      setEstaGuardando(false);
+      setProgresoGuardado(0);
+      onRegistroExitoso(nuevoUsuario);
+    }, 500);
+  }
+};
 
   const eliminarRegistros = () => {
     localStorage.removeItem('usuarios_registrados');
