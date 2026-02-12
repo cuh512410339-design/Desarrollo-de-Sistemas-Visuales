@@ -25,44 +25,54 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   }, []);
 
  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      // 1. Intentamos validar con la API usando la variable de entorno
-      const url = `${import.meta.env.VITE_API_URL}/usuarios?user=${userValue.trim()}&password=${passValue}`;
-      const response = await fetch(url);
+  try {
+    const url = `${import.meta.env.VITE_API_URL}/usuarios?user=${userValue.trim()}&password=${passValue}`;
+    const response = await fetch(url);
+    
+    if (!response.ok) throw new Error("Error en el servidor");
+
+    const datos = await response.json();
+    
+    // IMPORTANTE: Ahora el servidor devuelve un objeto con { token, user, email }
+    // Validamos si recibimos el token (esto cumple con "mecanismos seguros")
+    if (datos.token) {
+      // Guardamos tanto el token como los datos de sesión
+      localStorage.setItem('mern_token', datos.token); 
+      localStorage.setItem('mern_session', JSON.stringify(datos));
       
-      if (!response.ok) throw new Error("Error en el servidor");
-
-      const usuariosEncontrados = await response.json();
-      
-      if (usuariosEncontrados.length > 0) {
-        const usuarioValido = usuariosEncontrados[0];
-        localStorage.setItem('mern_session', JSON.stringify(usuarioValido));
-        setSesion(usuarioValido);
-        console.log("✅ Autenticado vía MongoDB");
-      } else {
-        alert("❌ Usuario o contraseña incorrectos.");
-      }
-
-    } catch (error) {
-      // 2. FALLBACK: Si el servidor no responde
-      console.warn("⚠️ Servidor offline, intentando validación local...");
-      const registrados: Usuario[] = JSON.parse(localStorage.getItem('usuarios_registrados') || '[]');
-      
-      const usuarioValido = registrados.find(
-        (u) => u.user.trim() === userValue.trim() && u.password === passValue
-      );
-
+      setSesion(datos);
+      console.log("✅ Autenticado vía MongoDB con Token JWT");
+    } else {
+      // Manejo por si la API devolvió un array (vieja lógica) o vacío
+      const usuarioValido = Array.isArray(datos) ? datos[0] : null;
       if (usuarioValido) {
         localStorage.setItem('mern_session', JSON.stringify(usuarioValido));
         setSesion(usuarioValido);
-        alert("ℹ️ Sesión iniciada en modo local (Offline).");
       } else {
-        alert("❌ Credenciales no encontradas.");
+        alert("❌ Usuario o contraseña incorrectos.");
       }
     }
-  };
+
+  } catch (error) {
+    // FALLBACK: Mantener funcionalidad Offline
+    console.warn("⚠️ Servidor offline, intentando validación local...");
+    const registrados: Usuario[] = JSON.parse(localStorage.getItem('usuarios_registrados') || '[]');
+    
+    const usuarioValido = registrados.find(
+      (u) => u.user.trim() === userValue.trim() && u.password === passValue
+    );
+
+    if (usuarioValido) {
+      localStorage.setItem('mern_session', JSON.stringify(usuarioValido));
+      setSesion(usuarioValido);
+      alert("ℹ️ Sesión iniciada en modo local (Offline).");
+    } else {
+      alert("❌ Credenciales no encontradas.");
+    }
+  }
+};
 
   const handleConfirmar = () => {
     if (sesion) onLoginSuccess(sesion);

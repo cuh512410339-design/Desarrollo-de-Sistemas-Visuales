@@ -4,9 +4,10 @@ import './RegistroForm.css';
 import ofertaIcon from '../assets/carrito.svg';
 
 interface Usuario {
+  _id?: string;
   user: string;
   email: string;
-  password?: string; // Agregamos esto como opcional
+  password?: string;
   date: string;
 }
 
@@ -30,6 +31,7 @@ const CampoForm = ({ label, valor, cambiarValor, tipo = "text", error, mensaje }
 );
 
 export default function RegistroForm({ onFinalizar, onRegistroExitoso }: RegistroProps) {
+  const [idParaEditar, setIdParaEditar] = useState<string | null>(null);
   const [usuario, setUsuario] = useState('');
   const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
@@ -77,52 +79,69 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
     if (password.length >= 6 && !validaciones.errorPass) puntos += 33;
     return puntos;
   }, [usuario, correo, password, validaciones]);
-
-  const manejarGuardado = async (e: React.FormEvent) => {
+  const prepararEdicion = (reg: Usuario) => {
+  setIdParaEditar(reg._id || null);
+  setUsuario(reg.user);
+  setCorreo(reg.email);
+  setPassword(''); // Por seguridad, password vacío para reescribir
+  setAceptaTerminos(true);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+const manejarGuardado = async (e: React.FormEvent) => {
   e.preventDefault();
   setEstaGuardando(true);
-  setProgresoGuardado(20);
+  setProgresoGuardado(30);
 
-  const nuevoUsuario = { 
+  // 1. Decidimos qué método y URL usar
+  const metodo = idParaEditar ? 'PUT' : 'POST';
+  const url = idParaEditar 
+    ? `${import.meta.env.VITE_API_URL}/usuarios/${idParaEditar}`
+    : `${import.meta.env.VITE_API_URL}/usuarios`;
+
+  const datosUsuario = { 
     user: usuario, 
     email: correo, 
-    password: password, // Ahora sí se enviará a MongoDB
-    date: new Date().toLocaleString() 
+    password: password, 
+    date: idParaEditar ? undefined : new Date().toLocaleString() 
   };
 
   try {
     setProgresoGuardado(60);
-    // Usamos la variable de entorno
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(nuevoUsuario)
+    // 2. Petición al servidor incluyendo el TOKEN de seguridad
+    const response = await fetch(url, {
+      method: metodo,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('mern_token')}` // <-- TOKEN AQUÍ
+      },
+      body: JSON.stringify(datosUsuario)
     });
 
-    if (!response.ok) throw new Error("Error en el servidor");
+    if (!response.ok) throw new Error("Error en la operación");
 
-    const usuarioGuardado = await response.json();
-    
     setProgresoGuardado(100);
-    setRegistros(prev => [...prev, usuarioGuardado]);
-    alert("✅ Registrado con éxito en MongoDB");
+    alert(idParaEditar ? "✅ Perfil actualizado" : "✅ Registro creado");
+
+    // 3. Resetear formulario y recargar lista
+    setIdParaEditar(null);
+    setUsuario(''); setCorreo(''); setPassword('');
+    
+    // Función para recargar la lista de la base de datos
+    const respCargar = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`);
+    const nuevosRegistros = await respCargar.json();
+    setRegistros(nuevosRegistros);
 
   } catch (error) {
-    // FALLBACK
-    console.error("Modo Fallback activado:", error);
-    const listaActualizada = [...registros, nuevoUsuario];
-    localStorage.setItem('usuarios_registrados', JSON.stringify(listaActualizada));
-    setRegistros(listaActualizada);
-    alert("⚠️ Servidor offline. Guardado en LocalStorage.");
+    console.error("Error:", error);
+    alert("❌ Error de comunicación con MongoDB");
   } finally {
     setTimeout(() => {
       setEstaGuardando(false);
       setProgresoGuardado(0);
-      onRegistroExitoso(nuevoUsuario);
+      if (!idParaEditar) onRegistroExitoso(datosUsuario as Usuario);
     }, 500);
   }
 };
-
   const eliminarRegistros = () => {
     localStorage.removeItem('usuarios_registrados');
     setRegistros([]);
@@ -150,7 +169,7 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
       </div>
 
       <div className="registro-card">
-        <h2>Registro a Evento</h2>
+        <h2>{idParaEditar ? '🛠️ Editando Perfil' : 'Registro a Evento'}</h2>
         
         <div className="progreso-wrapper">
           <small>Progreso Formulario: {progresoLlenado}%</small>
@@ -201,6 +220,16 @@ export default function RegistroForm({ onFinalizar, onRegistroExitoso }: Registr
           <button className="btn-save" type="submit" disabled={progresoLlenado < 100 || !aceptaTerminos || estaGuardando}>
             {estaGuardando ? 'Registrando...' : 'Registrar'}
           </button>
+          {idParaEditar && (
+  <button 
+    type="button" 
+    className="btn-back"
+    onClick={() => { setIdParaEditar(null); setUsuario(''); setCorreo(''); setPassword(''); }} 
+    style={{ marginTop: '10px', background: '#f4f4f4', color: '#666' }}
+  >
+    Cancelar Edición
+  </button>
+)}
         </form>
 
         <div className="registros-section">
