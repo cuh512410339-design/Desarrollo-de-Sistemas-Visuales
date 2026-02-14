@@ -10,68 +10,71 @@ export default function EditarPerfil() {
   
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
 
+  // --- LÓGICA PARA IDENTIFICAR AL USUARIO ---
+  // Obtenemos la sesión actual para saber de quién son los datos
+  const sesionGuardada = localStorage.getItem('mern_session');
+  const usuarioActual = sesionGuardada ? JSON.parse(sesionGuardada).user : 'anonimo';
+  
+  // Creamos una clave única por usuario (ej: perfil_usuario_juan)
+  const CLAVE_PERFIL = `perfil_usuario_${usuarioActual}`;
+
+  // 1. CARGA DINÁMICA: Solo lee los datos del usuario logueado
   useEffect(() => {
-    const guardado = JSON.parse(localStorage.getItem('perfil_personal_simple') || '{}');
-    setDatos({
-      telefono: guardado.telefono || '',
-      edad: guardado.edad || '',
-      sexo: guardado.sexo || ''
-    });
-  }, []);
+    const guardado = localStorage.getItem(CLAVE_PERFIL);
+    if (guardado) {
+      try {
+        setDatos(JSON.parse(guardado));
+      } catch (e) {
+        console.error("Error al parsear datos");
+      }
+    } else {
+      // Si el usuario no tiene datos previos, limpiamos el formulario
+      setDatos({ telefono: '', edad: '', sexo: '' });
+    }
+  }, [CLAVE_PERFIL]); // Se recarga si cambias de usuario
 
   const guardar = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación final de seguridad
+    // 2. VALIDACIONES
     const edadNum = Number(datos.edad);
     if (edadNum < 0 || edadNum > 150) {
-      setMensaje({ tipo: 'error', texto: '❌ Edad no válida (debe ser entre 0 y 150).' });
+      setMensaje({ tipo: 'error', texto: '❌ La edad debe estar entre 0 y 150.' });
       return;
     }
 
-    localStorage.setItem('perfil_personal_simple', JSON.stringify(datos));
-    setMensaje({ tipo: 'success', texto: '✅ ¡Perfil actualizado correctamente!' });
+    // 3. GUARDADO DINÁMICO
+    // Guardamos bajo la clave específica de este usuario
+    localStorage.setItem(CLAVE_PERFIL, JSON.stringify(datos));
     
+    setMensaje({ tipo: 'success', texto: `✅ Perfil de ${usuarioActual} guardado` });
     setTimeout(() => setMensaje({ tipo: '', texto: '' }), 2000);
   };
 
   return (
     <div className="perfil-container">
       <div className="perfil-card">
-        <h3>👤 Mi Perfil Personal</h3>
-        <p className="perfil-hint">Datos locales (Seguros y privados).</p>
+        <h3>👤 Datos de {usuarioActual}</h3>
+        <p style={{fontSize: '11px', color: '#888'}}>Los datos se guardan de forma privada para tu cuenta.</p>
         
         <form onSubmit={guardar}>
           <div className="form-group">
             <label>Teléfono</label>
             <input 
               type="number" 
-              min="0"
-              placeholder="Ej: 600123456"
               value={datos.telefono}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (Number(val) >= 0 || val === '') setDatos({...datos, telefono: val});
-              }}
+              onChange={(e) => setDatos({...datos, telefono: e.target.value})}
+              placeholder="Tu número"
             />
           </div>
 
           <div className="form-group">
-            <label>Edad </label>
+            <label>Edad</label>
             <input 
               type="number" 
-              min="0" 
-              max="150" // Límite en la interfaz
-              placeholder="Tu edad"
               value={datos.edad}
-              onChange={(e) => {
-                const val = e.target.value;
-                const num = Number(val);
-                // Bloqueamos valores negativos o mayores a 150 en tiempo real
-                if ((num >= 0 && num <= 150) || val === '') {
-                  setDatos({...datos, edad: val});
-                }
-              }}
+              onChange={(e) => setDatos({...datos, edad: e.target.value})}
+              placeholder="0 - 150"
             />
           </div>
 
@@ -94,7 +97,9 @@ export default function EditarPerfil() {
           </button>
 
           {mensaje.texto && (
-            <p className={`msg-${mensaje.tipo}`}>{mensaje.texto}</p>
+            <p className={mensaje.tipo === 'error' ? 'error-msg' : 'success-msg'}>
+              {mensaje.texto}
+            </p>
           )}
         </form>
       </div>

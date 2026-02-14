@@ -141,7 +141,12 @@ function App() {
         />
       ) : (
         <div className="auth-container-wrapper">
-          <LoginForm onLoginSuccess={(datos: any) => setSesionActiva(datos)} />
+          <LoginForm onLoginSuccess={(datos: any) => {
+            setSesionActiva(datos);
+            setTiempo(7200); // ✅ Reinicia el tiempo a 2 horas
+            localStorage.setItem('mern_timer', '7200'); // ✅ Limpia el tiempo viejo
+          }} />
+          
           <div className="register-link-container">
             <p>¿No tienes una cuenta aún?</p>
             <button className="btn-text-link" onClick={() => setMostrarRegistro(true)}>
@@ -238,6 +243,9 @@ function App() {
     Cookies.remove('mern_token');
     localStorage.removeItem('mern_session'); 
     localStorage.removeItem('mern_carrito'); 
+    localStorage.removeItem('mern_timer');
+    localStorage.removeItem('perfil_usuario_datos');
+    
     setSesionActiva(null); 
     setVerPanelAdmin(false); 
     setVistaActual('tienda');
