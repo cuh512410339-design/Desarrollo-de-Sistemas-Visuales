@@ -232,28 +232,39 @@ function App() {
                   fontSize: '12px'
                 }}
               >
-                ⚙️ ADMIN
+                ⚙️ Gestionar
               </button>
             )}
 
-            {/* 2. TU NOMBRE DE USUARIO Y SALIR */}
+            {/* 2. TU NOMBRE DE USUARIO, RANGO Y SALIR */}
 <div 
   className="location" 
-  onClick={() => { 
-    Cookies.remove('mern_token');
-    localStorage.removeItem('mern_session'); 
-    localStorage.removeItem('mern_carrito'); 
-    localStorage.removeItem('mern_timer');
-    localStorage.removeItem('perfil_usuario_datos');
-    
-    setSesionActiva(null); 
-    setVerPanelAdmin(false); 
-    setVistaActual('tienda');
-    setMostrarRegistro(false);
-  }}
-  style={{ cursor: 'pointer', color: 'white' }}
+  style={{ cursor: 'default', color: 'white', display: 'flex', alignItems: 'center' }}
 >
-  {sesionActiva?.user} | <span style={{fontSize: '10px', opacity: 0.8}}>Salir</span>
+  <span style={{ fontWeight: 'bold' }}>{sesionActiva?.user}</span>
+  
+  {/* Etiqueta de Rol Dinámica */}
+  <span className={`badge-role role-${sesionActiva?.role || 'cliente'}`}>
+    {sesionActiva?.role || 'cliente'}
+  </span>
+
+  <span 
+    onClick={() => { 
+      Cookies.remove('mern_token');
+      localStorage.removeItem('mern_session'); 
+      localStorage.removeItem('mern_carrito'); 
+      localStorage.removeItem('mern_timer');
+      localStorage.removeItem('perfil_usuario_datos');
+      
+      setSesionActiva(null); 
+      setTiempo(7200); 
+      setVerPanelAdmin(false); 
+      setVistaActual('tienda');
+    }}
+    style={{ marginLeft: '15px', fontSize: '10px', opacity: 0.8, cursor: 'pointer' }}
+  >
+    | Salir
+  </span>
 </div>
           </div>
         </header>
