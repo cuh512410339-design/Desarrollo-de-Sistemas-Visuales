@@ -4,6 +4,10 @@ import LoginForm from './Login/LoginForm'
 import RegistroForm from './Registro/RegistroForm' // Asegúrate de haber creado este archivo
 import GestionUsuarios from './gestion/GestionUsuarios' // Ajusta la ruta si es necesario
 
+import Cookies from 'js-cookie'; // ✅ Nueva
+import EditarPerfil from './perfil/EditarPerfil'; // ✅ Nueva
+import CheckoutForm from './compras/CheckoutForm'; // ✅ Nueva
+
 import { motion, AnimatePresence } from 'framer-motion'; // Para animaciones
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'; // Para Drag & Drop
 
@@ -16,37 +20,75 @@ import otrosIcon from './assets/otros mern.svg'
 
 function App() {
   const [carrito, setCarrito] = useState<string[]>([]);
-  const [sesionActiva, setSesionActiva] = useState<any>(null);
+  const [sesionActiva, setSesionActiva] = useState<any>(null); 
+  const [vistaActual, setVistaActual] = useState<'tienda' | 'perfil' | 'checkout'>('tienda');
   const [verPanelAdmin, setVerPanelAdmin] = useState(false);
-  
-  // Nuevo estado para decidir si mostramos el Login o el Registro Dinámico
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
-  // --- TEMPORIZADOR (Lógica) ---
-  const [tiempo, setTiempo] = useState(600); // 10 minutos
+  const [tiempo, setTiempo] = useState(7200); // 2 horas en segundos
+    const formatTiempo = (segundos: number) => {
+  const h = Math.floor(segundos / 3600);
+  const m = Math.floor((segundos % 3600) / 60);
+  const s = segundos % 60;
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTiempo((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-  
+  // Si hay horas, mostramos H:MM:SS. Si no hay, podemos mostrar MM:SS
+  if (h > 0) {
+    return `${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+};
 
-  const formatTiempo = (segundos: number) => {
-    
-    const m = Math.floor(segundos / 60);
-    const s = segundos % 60;
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
-  };
-  
-  // Al cargar, verificamos si ya había una sesión guardada
+  // 1. CARGA INICIAL (Una sola vez)
   useEffect(() => {
+    const token = Cookies.get('mern_token');
     const saved = localStorage.getItem('mern_session');
-    if (saved) {
+    const savedTime = localStorage.getItem('mern_timer');
+    
+    if (token && saved) {
       setSesionActiva(JSON.parse(saved));
+      if (savedTime) setTiempo(parseInt(savedTime));
     }
   }, []);
 
+  // 2. TEMPORIZADOR ÚNICO (Controlado por la sesión)
+  useEffect(() => {
+    if (!sesionActiva) return; // Si no hay sesión, no hay reloj
+
+    const timer = setInterval(() => {
+      setTiempo((prev) => {
+        if (prev <= 1) {
+          // Limpieza total al expirar
+          Cookies.remove('mern_token');
+          localStorage.removeItem('mern_session');
+          localStorage.removeItem('mern_timer');
+          setSesionActiva(null);
+          setVistaActual('tienda');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer); // Limpia el intervalo al desmontar o cerrar sesión
+  }, [sesionActiva]); // Se reinicia solo si la sesión cambia
+
+  // 3. PERSISTENCIA DEL TIEMPO
+  useEffect(() => {
+    if (sesionActiva) {
+      localStorage.setItem('mern_timer', tiempo.toString());
+    }
+  }, [tiempo, sesionActiva]);
+
+  // 4. PERSISTENCIA DEL CARRITO
+  useEffect(() => {
+    const guardado = localStorage.getItem('mern_carrito');
+    if (guardado) setCarrito(JSON.parse(guardado));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('mern_carrito', JSON.stringify(carrito));
+  }, [carrito]);
+
+  // ... funciones como formatTiempo y el resto del código ...
   const productos = [
     { id: 1, nombre: 'Producto 1' },
     { id: 2, nombre: 'Producto 2' },
@@ -127,6 +169,37 @@ function App() {
       </div>
     );
   }
+  // --- EL CEREBRO DE LA NAVEGACIÓN ---
+  // Este bloque decide qué pantalla mostrar antes de cargar la tienda
+  
+  if (verPanelAdmin && sesionActiva?.role === 'admin') {
+    return (
+      <div className="admin-view-wrapper">
+        <button onClick={() => setVerPanelAdmin(false)} className="btn-back-to-store" style={{margin:'20px'}}>⬅ Volver a la Tienda</button>
+        <GestionUsuarios />
+      </div>
+    );
+  }
+
+  if (vistaActual === 'perfil') {
+    return (
+      <div className="admin-view-wrapper">
+        <button onClick={() => setVistaActual('tienda')} className="btn-back-to-store" style={{margin:'20px'}}>⬅ Volver a la Tienda</button>
+        <EditarPerfil />
+      </div>
+    );
+  }
+
+  if (vistaActual === 'checkout') {
+    return (
+      <div className="admin-view-wrapper">
+        <button onClick={() => setVistaActual('tienda')} className="btn-back-to-store" style={{margin:'20px'}}>⬅ Volver a la Tienda</button>
+        <CheckoutForm />
+      </div>
+    );
+  }
+
+  // Si no entra en ninguno de los anteriores, ejecuta el return de abajo (la tienda)
   return (
     <DragDropContext onDragEnd={alTerminarArrastre}>
       <div className="container">
@@ -158,14 +231,22 @@ function App() {
               </button>
             )}
 
-            {/* 2. TU NOMBRE DE USUARIO Y SALIR (Original) */}
-            <div 
-              className="location" 
-              onClick={() => { localStorage.removeItem('mern_session'); setSesionActiva(null); }}
-              style={{ cursor: 'pointer', color: 'white' }}
-            >
-              {sesionActiva.user} || Salir 
-            </div>
+            {/* 2. TU NOMBRE DE USUARIO Y SALIR */}
+<div 
+  className="location" 
+  onClick={() => { 
+    Cookies.remove('mern_token');
+    localStorage.removeItem('mern_session'); 
+    localStorage.removeItem('mern_carrito'); 
+    setSesionActiva(null); 
+    setVerPanelAdmin(false); 
+    setVistaActual('tienda');
+    setMostrarRegistro(false);
+  }}
+  style={{ cursor: 'pointer', color: 'white' }}
+>
+  {sesionActiva?.user} | <span style={{fontSize: '10px', opacity: 0.8}}>Salir</span>
+</div>
           </div>
         </header>
 
@@ -178,11 +259,15 @@ function App() {
               {...provided.droppableProps}
             >
               <div className="banner-content">
-                <div className="timer-display" style={{ fontSize: '14px', fontWeight: 'bold', color: '#ffeb3b', marginBottom: '5px' }}>
-                  ⏳ Nuevas ofertas en: {formatTiempo(tiempo)}
-                </div>
-                <h2>BIENVENIDO, {sesionActiva.user.toUpperCase()}</h2>
-                <p>CARRITO ({carrito.length})</p>
+  <div className="timer-display" style={{ fontSize: '14px', fontWeight: 'bold', color: '#ffeb3b', marginBottom: '5px' }}>
+    ⏳ Tu sesión expira en: {formatTiempo(tiempo)}
+  </div>
+  <h2>
+    {vistaActual === 'tienda' ? `HOLA, ${sesionActiva?.user.toUpperCase()}` : 
+     vistaActual === 'perfil' ? 'MI PERFIL' : 'FINALIZAR COMPRA'}
+  </h2>
+  <p>CARRITO ({carrito.length})</p>
+  
                 <div className="cart-preview">
                   {carrito.length === 0 ? (
                     <p className="loading-animation">Selecciona o arrastra productos aquí...</p>
@@ -270,14 +355,24 @@ function App() {
 
         {/* --- TU FOOTER ORIGINAL --- */}
         <footer className="tab-bar">
-          <div className="tab-item"><span>🏠</span><small>Inicio</small></div>
-          <div className="tab-item"><span>☰</span><small>Cat.</small></div>
-          <div className="cart-fab pulse-orange">
-            🛒 {carrito.length > 0 && <span className="cart-badge">{carrito.length}</span>}
-          </div>
-          <div className="tab-item"><span>⚡</span><small>Clips</small></div>
-          <div className="tab-item"><span>...</span><small>Más</small></div>
-        </footer>
+  {/* El botón de Inicio vuelve a la tienda */}
+  <div className="tab-item" onClick={() => setVistaActual('tienda')}>
+    <span>🏠</span><small>Inicio</small>
+  </div>
+  
+  {/* Cambiamos el icono por uno de usuario para el Perfil */}
+  <div className="tab-item" onClick={() => setVistaActual('perfil')}>
+    <span>👤</span><small>Perfil</small>
+  </div>
+  
+  {/* El carrito ahora lleva al CheckoutForm */}
+  <div className="cart-fab pulse-orange" onClick={() => setVistaActual('checkout')}>
+    🛒 {carrito.length > 0 && <span className="cart-badge">{carrito.length}</span>}
+  </div>
+  
+  <div className="tab-item"><span>⚡</span><small>Clips</small></div>
+  <div className="tab-item"><span>...</span><small>Más</small></div>
+</footer>
       </div>
     </DragDropContext>
   )

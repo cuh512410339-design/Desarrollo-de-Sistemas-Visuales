@@ -73,19 +73,19 @@ const manejarGuardado = async (e: React.FormEvent) => {
       });
 
       if (response.ok) {
-        // --- CAMBIO DE TEXTO: Confirmación de MongoDB ---
-        setMensajeExito("🚀 Usuario guardado exitosamente");
-        
-        setUsuario(''); 
-        setCorreo(''); 
-        setPassword('');
-        setAceptaTerminos(false); // Reseteamos también el checkbox
-        
-        setTimeout(() => {
-          setMensajeExito(null);
-          onRegistroExitoso(datosUsuario as Usuario);
-        }, 2000);
-      } else {
+  // ✅ PASO CLAVE: Capturamos el usuario real que creó MongoDB (con su _id y email)
+  const usuarioCreado = await response.json(); 
+
+  setMensajeExito("🚀 Usuario guardado exitosamente");
+  
+  // Limpieza de inputs...
+  
+  setTimeout(() => {
+    setMensajeExito(null);
+    // ✅ PASAMOS EL OBJETO COMPLETO QUE VIENE DEL SERVIDOR
+    onRegistroExitoso(usuarioCreado); 
+  }, 2000);
+} else {
         setMensajeExito("❌ Error al guardar en la base de datos");
         setTimeout(() => setMensajeExito(null), 3000);
       }

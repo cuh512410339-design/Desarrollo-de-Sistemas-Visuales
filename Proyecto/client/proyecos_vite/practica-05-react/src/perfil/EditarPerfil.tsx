@@ -1,64 +1,103 @@
 import { useState, useEffect } from 'react';
+import './EditarPerfil.css';
 
 export default function EditarPerfil() {
   const [datos, setDatos] = useState({
-    user: '',
-    email: '',
-    bio: '' // Un campo extra para diferenciarlo del registro
+    telefono: '',
+    edad: '',
+    sexo: ''
   });
+  
+  const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
 
-  // --- EFECTO BORRADOR: Recuperar al cargar ---
   useEffect(() => {
-    const borradorGuardado = localStorage.getItem('borrador_perfil');
-    if (borradorGuardado) {
-      setDatos(JSON.parse(borradorGuardado));
-    }
+    const guardado = JSON.parse(localStorage.getItem('perfil_personal_simple') || '{}');
+    setDatos({
+      telefono: guardado.telefono || '',
+      edad: guardado.edad || '',
+      sexo: guardado.sexo || ''
+    });
   }, []);
 
-  // --- EFECTO BORRADOR: Guardar al escribir ---
-  useEffect(() => {
-    localStorage.setItem('borrador_perfil', JSON.stringify(datos));
-  }, [datos]);
-
-  const manejarCambio = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setDatos({ ...datos, [e.target.name]: e.target.value });
-  };
-
-  const guardarEnMongo = async (e: React.FormEvent) => {
+  const guardar = (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí iría tu fetch PUT a la API
-    console.log("Sincronizando con MongoDB...", datos);
+
+    // Validación final de seguridad
+    const edadNum = Number(datos.edad);
+    if (edadNum < 0 || edadNum > 150) {
+      setMensaje({ tipo: 'error', texto: '❌ Edad no válida (debe ser entre 0 y 150).' });
+      return;
+    }
+
+    localStorage.setItem('perfil_personal_simple', JSON.stringify(datos));
+    setMensaje({ tipo: 'success', texto: '✅ ¡Perfil actualizado correctamente!' });
     
-    // Al tener éxito, limpiamos el borrador
-    localStorage.removeItem('borrador_perfil');
-    alert("✅ Perfil actualizado en MongoDB");
+    setTimeout(() => setMensaje({ tipo: '', texto: '' }), 2000);
   };
 
   return (
-    <div className="gestion-container">
-      <h2>Edición de Perfil (Formulario 3)</h2>
-      <form onSubmit={guardarEnMongo}>
-        <div className="campo-container">
-          <label>Nombre Público</label>
-          <input 
-            name="user" 
-            value={datos.user} 
-            onChange={manejarCambio} 
-            className="input-dinamico" 
-          />
-        </div>
-        <div className="campo-container">
-          <label>Biografía</label>
-          <textarea 
-            name="bio" 
-            value={datos.bio} 
-            onChange={manejarCambio} 
-            className="input-dinamico"
-            placeholder="Cuenta algo sobre ti..."
-          />
-        </div>
-        <button type="submit" className="btn-save">Actualizar Datos</button>
-      </form>
+    <div className="perfil-container">
+      <div className="perfil-card">
+        <h3>👤 Mi Perfil Personal</h3>
+        <p className="perfil-hint">Datos locales (Seguros y privados).</p>
+        
+        <form onSubmit={guardar}>
+          <div className="form-group">
+            <label>Teléfono</label>
+            <input 
+              type="number" 
+              min="0"
+              placeholder="Ej: 600123456"
+              value={datos.telefono}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (Number(val) >= 0 || val === '') setDatos({...datos, telefono: val});
+              }}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Edad </label>
+            <input 
+              type="number" 
+              min="0" 
+              max="150" // Límite en la interfaz
+              placeholder="Tu edad"
+              value={datos.edad}
+              onChange={(e) => {
+                const val = e.target.value;
+                const num = Number(val);
+                // Bloqueamos valores negativos o mayores a 150 en tiempo real
+                if ((num >= 0 && num <= 150) || val === '') {
+                  setDatos({...datos, edad: val});
+                }
+              }}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Sexo</label>
+            <select 
+              value={datos.sexo}
+              onChange={(e) => setDatos({...datos, sexo: e.target.value})}
+              className="perfil-select"
+            >
+              <option value="">Seleccionar...</option>
+              <option value="Hombre">Hombre</option>
+              <option value="Mujer">Mujer</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <button type="submit" className="btn-save-simple">
+            Guardar Cambios
+          </button>
+
+          {mensaje.texto && (
+            <p className={`msg-${mensaje.tipo}`}>{mensaje.texto}</p>
+          )}
+        </form>
+      </div>
     </div>
   );
 }

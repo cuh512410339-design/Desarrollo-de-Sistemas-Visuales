@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import './LoginForm.css';
+import Cookies from 'js-cookie'; // ✅ Importamos la librería
 
-// Interfaz actualizada con Roles
 interface Usuario {
   user: string;
   email: string;
-  role: 'admin' | 'gestor' | 'cliente' | 'invitado'; // Requisito RBAC
+  role: 'admin' | 'gestor' | 'cliente' | 'invitado';
   date?: string;
   token?: string;
 }
@@ -19,10 +19,13 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const [userValue, setUserValue] = useState('');
   const [passValue, setPassValue] = useState('');
 
+  // --- REQUISITO: Verificar sesión vía Cookie al cargar ---
   useEffect(() => {
-    const saved = localStorage.getItem('mern_session');
-    if (saved) {
-      setSesion(JSON.parse(saved));
+    const token = Cookies.get('mern_token');
+    const savedSession = localStorage.getItem('mern_session'); // La info del usuario puede seguir en storage, pero el token MANDATORIO en Cookie
+    
+    if (token && savedSession) {
+      setSesion(JSON.parse(savedSession));
     }
   }, []);
 
@@ -30,7 +33,6 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     e.preventDefault();
 
     try {
-      // REQUISITO: Cambio a POST para envío seguro de credenciales
       const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -43,9 +45,30 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
       const datos = await response.json();
 
       if (response.ok && datos.token) {
-        // REQUISITO: Almacenamiento de Token JWT
-        localStorage.setItem('mern_token', datos.token);
-        localStorage.setItem('mern_session', JSON.stringify(datos));
+        // --- ✅ CAMBIO CLAVE: GUARDAR EN COOKIE ---
+        Cookies.set('mern_token', datos.token, { 
+          expires: 1, // 1 día
+          secure: true, 
+          sameSite: 'strict' 
+        });
+
+        if (response.ok && datos.token) {
+  // Reemplaza tu línea 56 actual por esta:
+const sesionAGuardar = datos.usuario ? { ...datos.usuario, token: datos.token } : datos;
+localStorage.setItem('mern_session', JSON.stringify(sesionAGuardar));
+
+  // ✅ Forzamos que el objeto tenga el email y el ID correcto de MongoDB
+  const sesionCompleta = {
+    ...datos,
+    // Usamos el email que viene del servidor o el que el usuario usó (si fuera el caso)
+    email: datos.email || 'correo@ejemplo.com', 
+    _id: datos._id || datos.id // MongoDB usa _id
+  };
+
+  localStorage.setItem('mern_session', JSON.stringify(sesionCompleta));
+  setSesion(sesionCompleta);
+  onLoginSuccess(sesionCompleta); // Pasamos los datos completos al App.tsx
+}
         
         setSesion(datos);
         console.log(`✅ Sesión iniciada como: ${datos.role}`);
@@ -55,7 +78,6 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
 
     } catch (error) {
       console.warn("⚠️ Servidor offline, intentando validación local...");
-      // Lógica de Fallback (Opcional según tu requerimiento de persistencia offline)
       const registrados = JSON.parse(localStorage.getItem('usuarios_registrados') || '[]');
       const usuarioValido = registrados.find(
         (u: any) => u.user.trim() === userValue.trim() && u.password === passValue
@@ -64,7 +86,8 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
       if (usuarioValido) {
         setSesion(usuarioValido);
         localStorage.setItem('mern_session', JSON.stringify(usuarioValido));
-        alert("ℹ️ Entrando en modo Offline (Sin Token)");
+        // Nota: En offline no podemos generar un JWT real, pero permitimos el acceso visual
+        alert("ℹ️ Entrando en modo Offline (Sin Cookie de Token)");
       } else {
         alert("❌ Credenciales no encontradas.");
       }
@@ -76,13 +99,15 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   };
 
   const handleEliminar = () => {
+    // --- ✅ CAMBIO CLAVE: LIMPIAR COOKIE ---
+    Cookies.remove('mern_token');
     localStorage.removeItem('mern_session');
-    localStorage.removeItem('mern_token');
     setSesion(null);
   };
 
   return (
     <div className="login-card">
+      {/* ... El resto de tu JSX se mantiene igual ... */}
       {!sesion ? (
         <div className="auth-content">
           <div className="auth-header">
