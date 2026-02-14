@@ -160,3 +160,30 @@
   text-decoration: underline;
   cursor: pointer;
 }
+.lista-mini {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto; /* Por si tienes muchos usuarios */
+}
+
+.lista-mini li {
+  background: #f9f9f9;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+.lista-mini li:hover {
+  background: #f0f0f0;
+}
+
+.btn-back {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}

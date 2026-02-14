@@ -1,0 +1,111 @@
+/* Contenedor externo (Fondo degradado) */
+.admin-view-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* La tarjeta blanca (Ahora con bordes más suaves y sombra sutil) */
+.gestion-container {
+  padding: 30px;
+  width: 95%;
+  max-width: 1000px;
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.95); /* Blanco casi sólido */
+  border-radius: 20px; /* Más redondeado como tus inputs */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.gestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e8f5e9;
+  padding-bottom: 20px;
+}
+
+.gestion-header h1 {
+  color: #1b5e20; /* Verde oscuro elegante */
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+/* Botón "Actualizar" y "Volver" con tu verde corporativo */
+.btn-refresh, .btn-back-to-store {
+  background-color: #00a650;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-refresh:hover, .btn-back-to-store:hover {
+  background-color: #008f45;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 166, 80, 0.3);
+}
+
+/* Tabla de Usuarios */
+.tabla-usuarios {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px; /* Separa un poco las filas */
+  text-align: left;
+}
+
+.tabla-usuarios th {
+  padding: 15px;
+  color: #2e7d32;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.tabla-usuarios td {
+  padding: 15px;
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Estilo de los Roles (Badges) */
+.badge {
+  padding: 5px 12px;
+  border-radius: 50px; /* Estilo píldora */
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.badge.admin { 
+  background: #e8f5e9; 
+  color: #2e7d32; 
+  border: 1px solid #2e7d32; 
+}
+
+.badge.cliente { 
+  background: #f1f8e9; 
+  color: #689f38; 
+}
+
+/* Botón Eliminar (Rojo pero moderno) */
+.btn-delete {
+  background: #ff5252;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-delete:hover {
+  background: #ff1744;
+  box-shadow: 0 4px 10px rgba(255, 82, 82, 0.4);
+}

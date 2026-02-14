@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import LoginForm from './Login/LoginForm'
 import RegistroForm from './Registro/RegistroForm' // Asegúrate de haber creado este archivo
+import GestionUsuarios from './gestion/GestionUsuarios' // Ajusta la ruta si es necesario
 
 import { motion, AnimatePresence } from 'framer-motion'; // Para animaciones
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'; // Para Drag & Drop
@@ -16,6 +17,7 @@ import otrosIcon from './assets/otros mern.svg'
 function App() {
   const [carrito, setCarrito] = useState<string[]>([]);
   const [sesionActiva, setSesionActiva] = useState<any>(null);
+  const [verPanelAdmin, setVerPanelAdmin] = useState(false);
   
   // Nuevo estado para decidir si mostramos el Login o el Registro Dinámico
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
@@ -111,6 +113,20 @@ function App() {
 }
 
   // --- PASO 2: INTERFAZ PRINCIPAL DE LA TIENDA ---
+  if (verPanelAdmin) {
+    return (
+      <div className="admin-view-wrapper">
+        <button 
+          onClick={() => setVerPanelAdmin(false)} 
+          className="btn-back-to-store"
+          style={{margin: '20px', padding: '10px', cursor: 'pointer'}}
+        >
+          ⬅ Volver a la Tienda
+        </button>
+        <GestionUsuarios />
+      </div>
+    );
+  }
   return (
     <DragDropContext onDragEnd={alTerminarArrastre}>
       <div className="container">
@@ -119,12 +135,37 @@ function App() {
             <span className="icon">🔍</span>
             <input type="text" placeholder={`Buscar`} disabled />
           </div>
-          <div 
-            className="location" 
-            onClick={() => { localStorage.removeItem('mern_session'); setSesionActiva(null); }}
-            style={{ cursor: 'pointer', color: 'white' }}
-          >
-            {sesionActiva.user} || Salir 
+
+          {/* CONTENEDOR DE USUARIO Y PANEL */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            
+            {/* 1. EL BOTÓN DE ACCESO: Solo se muestra si el usuario es admin */}
+            {sesionActiva?.role === 'admin' && (
+              <button 
+                onClick={() => setVerPanelAdmin(true)}
+                style={{
+                  background: '#ff9800',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '12px'
+                }}
+              >
+                ⚙️ ADMIN
+              </button>
+            )}
+
+            {/* 2. TU NOMBRE DE USUARIO Y SALIR (Original) */}
+            <div 
+              className="location" 
+              onClick={() => { localStorage.removeItem('mern_session'); setSesionActiva(null); }}
+              style={{ cursor: 'pointer', color: 'white' }}
+            >
+              {sesionActiva.user} || Salir 
+            </div>
           </div>
         </header>
 
@@ -138,13 +179,13 @@ function App() {
             >
               <div className="banner-content">
                 <div className="timer-display" style={{ fontSize: '14px', fontWeight: 'bold', color: '#ffeb3b', marginBottom: '5px' }}>
-                  ⏳ La oferta termina en: {formatTiempo(tiempo)}
+                  ⏳ Nuevas ofertas en: {formatTiempo(tiempo)}
                 </div>
                 <h2>BIENVENIDO, {sesionActiva.user.toUpperCase()}</h2>
                 <p>CARRITO ({carrito.length})</p>
                 <div className="cart-preview">
                   {carrito.length === 0 ? (
-                    <p className="loading-animation">Arrastra productos aquí...</p>
+                    <p className="loading-animation">Selecciona o arrastra productos aquí...</p>
                   ) : (
                     <div className="cart-tags">
                       <AnimatePresence>
