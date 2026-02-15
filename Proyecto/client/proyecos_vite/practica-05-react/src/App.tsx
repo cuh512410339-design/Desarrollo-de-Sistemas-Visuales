@@ -11,6 +11,7 @@ import CheckoutForm from './compras/CheckoutForm'; // ✅ Nueva
 import { motion, AnimatePresence } from 'framer-motion'; // Para animaciones
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'; // Para Drag & Drop
 
+import EnProgreso from './construccion/EnProgreso';
 // Iconos
 import ofertaIcon from './assets/ofertas mern.svg'
 import afiliadosIcon from './assets/afiliados mern.svg'
@@ -21,7 +22,7 @@ import otrosIcon from './assets/otros mern.svg'
 function App() {
   const [carrito, setCarrito] = useState<string[]>([]);
   const [sesionActiva, setSesionActiva] = useState<any>(null); 
-  const [vistaActual, setVistaActual] = useState<'tienda' | 'perfil' | 'checkout'>('tienda');
+  const [vistaActual, setVistaActual] = useState<'tienda' | 'perfil' | 'checkout' | 'progreso'>('tienda');
   const [verPanelAdmin, setVerPanelAdmin] = useState(false);
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
   const [tiempo, setTiempo] = useState(7200); // 2 horas en segundos
@@ -203,6 +204,14 @@ function App() {
       </div>
     );
   }
+   if (vistaActual === 'progreso') {
+   return (
+    <div className="admin-view-wrapper">
+      {/* Le pasamos la función que cambia el estado a tienda */}
+      <EnProgreso onBack={() => setVistaActual('tienda')} />
+    </div>
+  );
+}
 
   // Si no entra en ninguno de los anteriores, ejecuta el return de abajo (la tienda)
   return (
@@ -323,22 +332,27 @@ function App() {
         </nav>
 
         {/* --- TUS ICONOS SVG ORIGINALES --- */}
-        <section className="action-icons">
-          {[
-            { name: 'Ofertas', img: ofertaIcon },
-            { name: 'Afiliados', img: afiliadosIcon },
-            { name: 'Play', img: playIcon },
-            { name: 'Cupones', img: cuponesIcon },
-            { name: 'Más', img: otrosIcon }
-          ].map((item) => (
-            <div key={item.name} className="action-item">
-              <div className="icon-placeholder">
-                <img src={item.img} alt={item.name} className="action-svg" />
-              </div>
-              <span>{item.name}</span>
-            </div>
-          ))}
-        </section>
+<section className="action-icons">
+  {[
+    { name: 'Ofertas', img: ofertaIcon },
+    { name: 'Afiliados', img: afiliadosIcon },
+    { name: 'Play', img: playIcon },
+    { name: 'Cupones', img: cuponesIcon },
+    { name: 'Más', img: otrosIcon }
+  ].map((item) => (
+    <div 
+      key={item.name} 
+      className="action-item" 
+      onClick={() => setVistaActual('progreso')} // ⬅️ ESTA ES LA CLAVE
+      style={{ cursor: 'pointer' }}
+    >
+      <div className="icon-placeholder">
+        <img src={item.img} alt={item.name} className="action-svg" />
+      </div>
+      <span>{item.name}</span>
+    </div>
+  ))}
+</section>
 
         <h3 style={{ padding: '0 15px', fontSize: '16px', marginTop: '10px' }}>Visto recientemente</h3>
 
@@ -372,29 +386,30 @@ function App() {
           )}
         </Droppable>
 
-        {/* --- TU FOOTER ORIGINAL --- */}
+{/* --- TU FOOTER ORIGINAL --- */}
         <footer className="tab-bar">
-  {/* El botón de Inicio vuelve a la tienda */}
-  <div className="tab-item" onClick={() => setVistaActual('tienda')}>
-    <span>🏠</span><small>Inicio</small>
-  </div>
-  
-  {/* Cambiamos el icono por uno de usuario para el Perfil */}
-  <div className="tab-item" onClick={() => setVistaActual('perfil')}>
-    <span>👤</span><small>Perfil</small>
-  </div>
-  
-  {/* El carrito ahora lleva al CheckoutForm */}
-  <div className="cart-fab pulse-orange" onClick={() => setVistaActual('checkout')}>
-    🛒 {carrito.length > 0 && <span className="cart-badge">{carrito.length}</span>}
-  </div>
-  
-  <div className="tab-item"><span>⚡</span><small>Clips</small></div>
-  <div className="tab-item"><span>...</span><small>Más</small></div>
-</footer>
-      </div>
-    </DragDropContext>
-  )
-}
+          <div className="tab-item" onClick={() => setVistaActual('tienda')}>
+            <span>🏠</span><small>Inicio</small>
+          </div>
+          
+          <div className="tab-item" onClick={() => setVistaActual('perfil')}>
+            <span>👤</span><small>Perfil</small>
+          </div>
+          
+          <div className="cart-fab pulse-orange" onClick={() => setVistaActual('checkout')}>
+            🛒 {carrito.length > 0 && <span className="cart-badge">{carrito.length}</span>}
+          </div>
+          
+          <div className="tab-item" onClick={() => setVistaActual('progreso')}>
+            <span>⚡</span><small>Clips</small>
+          </div>
+          <div className="tab-item" onClick={() => setVistaActual('progreso')}>
+            <span>...</span><small>Más</small>
+          </div>
+        </footer>
+      </div> {/* Cierra el <div className="container"> */}
+    </DragDropContext> // Cierra el DragDropContext
+  ); // Cierra el return
+} // Cierra la function App()
 
-export default App
+export default App;
