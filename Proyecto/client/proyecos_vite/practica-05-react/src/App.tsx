@@ -18,6 +18,7 @@ import afiliadosIcon from './assets/afiliados mern.svg'
 import playIcon from './assets/play mern.svg'
 import cuponesIcon from './assets/cupones mern.svg'
 import otrosIcon from './assets/otros mern.svg'
+import construccionIcon from './assets/construccion.svg'
 
 function App() {
   const [carrito, setCarrito] = useState<string[]>([]);
@@ -91,12 +92,12 @@ function App() {
 
   // ... funciones como formatTiempo y el resto del código ...
   const productos = [
-    { id: 1, nombre: 'Producto 1' },
-    { id: 2, nombre: 'Producto 2' },
-    { id: 3, nombre: 'Producto 3' },
-    { id: 4, nombre: 'Producto 4' },
-    { id: 5, nombre: 'Producto 5' },
-    { id: 6, nombre: 'Producto 6' },
+    { id: 1, nombre: 'Producto 1', imagen: construccionIcon },
+    { id: 2, nombre: 'Producto 2', imagen: construccionIcon },
+    { id: 3, nombre: 'Producto 3', imagen: construccionIcon },
+    { id: 4, nombre: 'Producto 4', imagen: construccionIcon },
+    { id: 5, nombre: 'Producto 5', imagen: construccionIcon },
+    { id: 6, nombre: 'Producto 6', imagen: construccionIcon },
   ];
 
   const agregarAlCarrito = (nombre: string) => {
@@ -374,7 +375,12 @@ function App() {
                       {...provided.dragHandleProps}
                       onClick={() => agregarAlCarrito(prod.nombre)}
                     >
-                      <div className="product-image-box skeleton"></div>
+                      <div className="product-image-box"><img 
+                  src={prod.imagen} 
+                  alt={prod.nombre} 
+                  style={{ width: '50px', height: '50px', objectFit: 'contain' }} 
+                />
+              </div>
                       <p className="price">{prod.nombre}</p>
                       <p className="shipping">Arrastra al carrito</p>
                     </div>

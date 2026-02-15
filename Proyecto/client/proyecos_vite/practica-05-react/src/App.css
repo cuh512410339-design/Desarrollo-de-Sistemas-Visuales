@@ -512,3 +512,40 @@ input:focus {
 .role-vendedor { background-color: #2196f3; color: white; }
 .role-premium { background-color: #ffc107; color: black; }
 .role-cliente { background-color: #757575; color: white; }
+/* Contenedor de la imagen */
+.product-image-box {
+  background-color: #ffffff; /* Fondo blanco limpio */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #f0f0f0;
+  overflow: hidden; /* Evita que la imagen se salga al crecer */
+  transition: all 0.3s ease; /* Suaviza el cambio de color o sombra */
+}
+
+/* El icono SVG */
+.product-image-box img {
+  width: 65px;
+  height: auto;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto elástico */
+}
+
+/* Efecto HOVER: Cuando el usuario pasa el mouse sobre la tarjeta */
+.product-card:hover .product-image-box {
+  border-color: #ff9800; /* Resalta el borde con tu color naranja */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.product-card:hover img {
+  transform: scale(1.2) rotate(5deg); /* Crece y gira un poquito */
+}
+
+/* Estilo para cuando se está arrastrando (framer-motion/dnd) */
+.dragging {
+  opacity: 0.8;
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
